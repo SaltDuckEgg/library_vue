@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -67,8 +67,9 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         // const { data } = response
-        console.log(response.userinfo)
-        const { username, name, user_type, academy, class_num, phone, email } = response.userinfo
+        console.log(response)
+        const { username, name, roles, academy, class_num, phone, email } = response
+        console.log([roles])
 
         if (!username) {
           reject('Verification failed, please Login again.')
@@ -80,7 +81,7 @@ const actions = {
         // }
 
         commit('SET_NAME', name)
-        commit('SET_ROLES', user_type)
+        commit('SET_ROLES', [roles])
         commit('SET_ACADEMY', academy)
         commit('SET_CLASS_NUM', class_num)
         commit('SET_PHONE', phone)
@@ -88,7 +89,7 @@ const actions = {
 
         // commit('SET_AVATAR', avatar)
         // commit('SET_INTRODUCTION', introduction)
-        resolve({ roles: [user_type] })
+        resolve({ roles: [roles] })
       }).catch(error => {
         reject(error)
       })
@@ -98,20 +99,16 @@ const actions = {
   // user logout
   logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
-        removeToken()
-        resetRouter()
+      commit('SET_TOKEN', '')
+      commit('SET_ROLES', [])
+      removeToken()
+      resetRouter()
 
-        // reset visited views and cached views
-        // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
-        dispatch('tagsView/delAllViews', null, { root: true })
+      // reset visited views and cached views
+      // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
+      dispatch('tagsView/delAllViews', null, { root: true })
 
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+      resolve()
     })
   },
 

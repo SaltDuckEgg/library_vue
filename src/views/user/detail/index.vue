@@ -8,51 +8,58 @@
           </div>
           <div>
             <div class="text-center">
-              <userAvatar :user="user"/>
+              <userAvatar :user="user" />
             </div>
             <ul class="list-group list-group-striped">
               <li class="list-group-item">
-                <svg-icon icon-class="user"/>
+                <svg-icon icon-class="user" />
                 姓名
                 <div class="pull-right">{{ user.name }}</div>
               </li>
               <li class="list-group-item">
-                <svg-icon icon-class="sex"/>
+                <svg-icon icon-class="sex" />
                 性别
                 <div class="pull-right">{{ user.sex }}</div>
               </li>
               <li class="list-group-item">
-                <svg-icon icon-class="username"/>
+                <svg-icon icon-class="username" />
                 学号
                 <div class="pull-right">{{ user.username }}</div>
               </li>
               <li class="list-group-item">
-                <svg-icon icon-class="phone"/>
+                <svg-icon icon-class="phone" />
                 手机号码
                 <div class="pull-right">{{ user.phone }}</div>
               </li>
               <li class="list-group-item">
-                <svg-icon icon-class="email"/>
+                <svg-icon icon-class="email" />
                 用户邮箱
                 <div class="pull-right">{{ user.email }}</div>
               </li>
               <li class="list-group-item">
-                <svg-icon icon-class="tree"/>
+                <svg-icon icon-class="tree" />
                 学院
                 <div class="pull-right">{{ user.academy }}</div>
               </li>
               <li class="list-group-item">
-                <svg-icon icon-class="class"/>
+                <svg-icon icon-class="class" />
                 班级
                 <div class="pull-right">{{ user.class_num }}</div>
               </li>
               <li class="list-group-item">
-                <svg-icon icon-class="peoples"/>
+                <svg-icon icon-class="peoples" />
                 用户权限
                 <div class="pull-right">{{ user.roles }}</div>
               </li>
             </ul>
           </div>
+          <el-button
+            v-if="this.$store.getters.roles[0] === 'inactive_user'"
+            type="primary"
+            @click="dialogTableVisible = true"
+          >
+            激活
+          </el-button>
         </el-card>
       </el-col>
       <!--      <el-col :span="18" :xs="24">-->
@@ -70,6 +77,23 @@
       <!--          </el-tabs>-->
       <!--        </el-card>-->
       <!--      </el-col>-->
+      <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+        <el-form :model="form">
+          <el-form-item label="活动名称" :label-width="formLabelWidth">
+            <el-input v-model="form.name" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="活动区域" :label-width="formLabelWidth">
+            <el-select v-model="form.region" placeholder="请选择活动区域">
+              <el-option label="区域一" value="shanghai" />
+              <el-option label="区域二" value="beijing" />
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        </div>
+      </el-dialog>
     </el-row>
   </div>
 </template>
@@ -83,16 +107,19 @@ export default {
   components: { userAvatar },
   data() {
     return {
-      user: {
-        // username: '8207181829',
-        // sex: 'male',
-        // name: '水',
-        // phone: '12345678',
-        // email: '12345678@qq.com',
-        // academy: '自动化学院',
-        // class_num: '1802',
-        // roles: 'administrator'
-      }
+      user: {},
+      dialogFormVisible: false,
+      form: {
+        name: '',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
+      },
+      formLabelWidth: '120px'
     }
   },
   created() {
@@ -105,8 +132,6 @@ export default {
         'active_user': '正式用户',
         'administrator': '管理员'
       }
-      console.log(this.$store.getters.roles)
-      console.log(this.$store.getters.roles === 'inactive_user')
       if (this.$store.getters.roles[0] === 'inactive_user') {
         Message({
           message: '请您先激活账号，以便使用更多功能！',

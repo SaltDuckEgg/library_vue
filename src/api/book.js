@@ -38,21 +38,20 @@ export function dataTranFormer(oldVal) {
 
 export function dataTest(oldVal) {
   return [{
-    author: "Christopher",
+    author: 'Christopher',
     comment_disabled: true,
-    content: "<p>I am testing data, I am testing data.</p><p><img src=\"https://wpimg.wallstcn.com/4c69009c-0fd4-4153-b112-6cb53d1cf943\"></p>",
-    content_short: "mock data",
-    display_time: "2008-03-03 18:02:29",
+    content: '<p>I am testing data, I am testing data.</p><p><img src="https://wpimg.wallstcn.com/4c69009c-0fd4-4153-b112-6cb53d1cf943"></p>',
+    content_short: 'mock data',
+    display_time: '2008-03-03 18:02:29',
     forecast: 95.16,
     id: 1,
-    image_uri: "https://wpimg.wallstcn.com/e4558086-631c-425c-9430-56ffb46e70b3",
+    image_uri: 'https://wpimg.wallstcn.com/e4558086-631c-425c-9430-56ffb46e70b3',
     importance: 3,
     pageviews: 1505,
     platforms: Array(1),
-    reviewer: "Carol",
-    status: "published",
+    reviewer: 'Carol',
+    status: 'published',
     timestamp: 1614634668386,
-    title: "Tkmswlwic Nkjhmgn Rdxphihs Merkm Fhxzsdk Alo Myntrnu Kudqhiiudk"
+    title: 'Tkmswlwic Nkjhmgn Rdxphihs Merkm Fhxzsdk Alo Myntrnu Kudqhiiudk'
   }]
-
 }

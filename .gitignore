@@ -281,3 +281,6 @@ $RECYCLE.BIN/
 # gitignore template for Vue.js projects
 #
 # Recommended template: Node.gitignore
+
+package.json
+package-lock.json

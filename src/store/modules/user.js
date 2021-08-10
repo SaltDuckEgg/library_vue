@@ -5,12 +5,13 @@ import router, { resetRouter } from '@/router'
 const state = {
   token: getToken(),
   name: '',
-  academy: '',
-  class_num: '',
+  sex: '',
+  username: '',
   phone: '',
   email: '',
+  academy: '',
+  class_num: '',
   avatar: '',
-  // introduction: '',
   roles: []
 }
 
@@ -18,23 +19,26 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  // SET_INTRODUCTION: (state, introduction) => {
-  //     state.introduction = introduction
-  // },
   SET_NAME: (state, name) => {
     state.name = name
+  },
+  SET_SEX: (state, sex) => {
+    state.sex = sex
+  },
+  SET_USERNAME: (state, username) => {
+    state.username = username
+  },
+  SET_PHONE: (state, phone) => {
+    state.phone = phone
+  },
+  SET_EMAIL: (state, email) => {
+    state.email = email
   },
   SET_ACADEMY: (state, academy) => {
     state.academy = academy
   },
   SET_CLASS_NUM: (state, class_num) => {
     state.class_num = class_num
-  },
-  SET_PHONE: (state, phone) => {
-    state.name = phone
-  },
-  SET_EMAIL: (state, email) => {
-    state.email = email
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
@@ -50,8 +54,8 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        const token = response.token
-        // const roles = response.roles
+        const token = response.data.token
+        // const roles = response.data.roles
         commit('SET_TOKEN', token)
         // commit('SET_ROLES', roles)
         setToken(token)
@@ -62,33 +66,44 @@ const actions = {
     })
   },
 
+  tmpTest({ commit }) {
+    console.log('tmpTesting...')
+    commit('SET_TOKEN', 'hello')
+    commit('SET_ROLES', ['administrator'])
+    setToken('hello')
+  },
+
+  tmpGetInfo({ commit, state }) {
+    return { roles: ['administrator'] }
+  },
+
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
-        // const { data } = response
-        console.log(response)
-        const { username, name, roles, academy, class_num, phone, email } = response
-        console.log([roles])
+        const { name, sex, username, phone, email, academy, class_num, avatar, roles } = response.data
 
         if (!username) {
-          reject('Verification failed, please Login again.')
+          reject('认证失败，请重新登陆！')
         }
 
-        // // roles must be a non-empty array
-        // if (!roles || roles.length <= 0) {
-        //   reject('getInfo: roles must be a non-null array!')
-        // }
+        console.log('头像:', avatar)
+
+        // roles must be in list
+        if (['inactive_user', 'active_user', 'administrator'].indexOf(roles) === -1) {
+          reject('roles不合法!')
+        }
 
         commit('SET_NAME', name)
-        commit('SET_ROLES', [roles])
-        commit('SET_ACADEMY', academy)
-        commit('SET_CLASS_NUM', class_num)
+        commit('SET_SEX', sex)
+        commit('SET_USERNAME', username)
         commit('SET_PHONE', phone)
         commit('SET_EMAIL', email)
+        commit('SET_ACADEMY', academy)
+        commit('SET_CLASS_NUM', class_num)
+        commit('SET_AVATAR', avatar)
+        commit('SET_ROLES', [roles])
 
-        // commit('SET_AVATAR', avatar)
-        // commit('SET_INTRODUCTION', introduction)
         resolve({ roles: [roles] })
       }).catch(error => {
         reject(error)

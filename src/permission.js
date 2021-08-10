@@ -29,6 +29,9 @@ router.beforeEach(async(to, from, next) => {
       // determine whether the user has obtained his permission roles through getInfo
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
       if (hasRoles) {
+        // const { roles } = await store.dispatch('user/tmpGetInfo')
+        // const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+        // router.addRoutes(accessRoutes)
         next()
       } else {
         try {

@@ -97,8 +97,8 @@ export default {
     }
     return {
       loginForm: {
-        username: '8207181829',
-        password: '8207181829'
+        username: '8207181529',
+        password: 'Lyy123'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -164,6 +164,14 @@ export default {
             .catch(() => {
               this.loading = false
             })
+          // this.$store.dispatch('user/tmpTest')
+          //   .then(() => {
+          //     this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+          //     this.loading = false
+          //   })
+          //   .catch(() => {
+          //     this.loading = false
+          //   })
         } else {
           console.log('error submit!!')
           return false

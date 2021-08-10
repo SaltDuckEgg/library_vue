@@ -30,6 +30,18 @@ module.exports = {
   //   host: '0.0.0.0',
   //   port: port,
   //   open: true,
+
+  // edited by ljj
+  // proxy: {
+  //   [process.env.VUE_APP_BASE_API]: {
+  //     target: process.env.VUE_APP_BASE_API,
+  //     changeOrigin: true,  //配置跨域
+  //     pathRewrite: {
+  //       ['^' + process.env.VUE_APP_BASE_API]: ''
+  //     }
+  //   }
+  // }
+
   //   proxy: {
   //     // detail: https://cli.vuejs.org/config/#devserver-proxy
   //     [process.env.VUE_APP_BASE_API]: {

@@ -46,12 +46,18 @@ const mutations = {
 
 const actions = {
   // user login
+  tmpTest({ commit }) {
+    console.log('tmpTesting...')
+    commit('SET_TOKEN', 'hello')
+    commit('SET_ROLES', ['administrator'])
+    setToken('hello')
+  },
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        const token = response.token
-        // const roles = response.roles
+        const token = response.data.token
+        // const roles = response.data.roles
         commit('SET_TOKEN', token)
         // commit('SET_ROLES', roles)
         setToken(token)
@@ -61,14 +67,16 @@ const actions = {
       })
     })
   },
-
+  tmpGetInfo({ commit, state }) {
+    return { roles: ['administrator'] }
+  },
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         // const { data } = response
         console.log(response)
-        const { username, name, roles, academy, class_num, phone, email } = response
+        const { username, name, roles, academy, class_num, phone, email } = response.data
         console.log([roles])
 
         if (!username) {

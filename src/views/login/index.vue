@@ -1,7 +1,13 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
-
+    <el-form
+      ref="loginForm"
+      :model="loginForm"
+      :rules="loginRules"
+      class="login-form"
+      autocomplete="on"
+      label-position="left"
+    >
       <div class="title-container">
         <h3 class="title">中南大学图书馆管理系统登陆</h3>
       </div>
@@ -45,7 +51,12 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登陆</el-button>
+      <el-button
+        :loading="loading"
+        type="primary"
+        style="width:100%;margin-bottom:30px;"
+        @click.native.prevent="handleLogin"
+      >登陆</el-button>
 
       <div style="position:relative">
         <!--        <div class="tips">-->
@@ -57,17 +68,15 @@
         <!--          <span>Password : any</span>-->
         <!--        </div>-->
 
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          第三方登陆
-        </el-button>
+        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">第三方登陆</el-button>
       </div>
     </el-form>
 
     <el-dialog title="Or connect with" :visible.sync="showDialog">
       Can not be simulated on local, so please combine you own business simulation! ! !
-      <br>
-      <br>
-      <br>
+      <br />
+      <br />
+      <br />
       <social-sign />
     </el-dialog>
   </div>
@@ -97,8 +106,8 @@ export default {
     }
     return {
       loginForm: {
-        username: '8207181829',
-        password: '8207181829'
+        username: '8207180819',
+        password: '8207180819'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -114,7 +123,7 @@ export default {
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         const query = route.query
         if (query) {
           this.redirect = query.redirect
@@ -156,7 +165,8 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
+          console.log(this.redirect)
+          this.$store.dispatch('user/tmpTest')
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
@@ -164,12 +174,41 @@ export default {
             .catch(() => {
               this.loading = false
             })
+          console.log('redirected!!')
         } else {
           console.log('error submit!!')
           return false
         }
       })
     },
+    // handleLogin() {
+    //   this.$refs.loginForm.validate(valid => {
+    //     if (valid) {
+    //       this.loading = true
+    //       this.$store.dispatch('user/login', this.loginForm)
+    //         .then(() => {
+    //           this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+    //           this.loading = false
+    //         })
+    //         .catch(() => {
+    //           this.loading = false
+    //         })
+    //       console.log(this.redirect)
+    //         // this.$store.dispatch('user/tmpTest')
+    //         .then(() => {
+    //           this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+    //           this.loading = false
+    //         })
+    //         .catch(() => {
+    //           this.loading = false
+    //         })
+    //       console.log('redirected')
+    //     } else {
+    //       console.log('error submit!!')
+    //       return false
+    //     }
+    //   })
+    // },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
         if (cur !== 'redirect') {
@@ -178,6 +217,7 @@ export default {
         return acc
       }, {})
     }
+
     // afterQRScan() {
     //   if (e.key === 'x-admin-oauth-code') {
     //     const code = getQueryObject(e.newValue)
@@ -204,8 +244,8 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
-$light_gray:#fff;
+$bg: #283443;
+$light_gray: #fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -248,9 +288,9 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #eee;
 
 .login-container {
   min-height: 100%;

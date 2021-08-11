@@ -1,14 +1,15 @@
-import { login, getInfo, activation } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login, getInfo, activation, password } from '@/api/user'
+import { getToken, setToken, removeToken, getPassword, setPassword, removePassword } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { Message } from 'element-ui'
+import js_sha256 from 'js-sha256'
 
 const state = {
   token: getToken(),
   name: '',
   sex: '',
   username: '',
-  password: '',
+  password: getPassword() || '',
   phone: '',
   email: '',
   academy: '',
@@ -58,11 +59,12 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      login({ username: username.trim(), password: js_sha256.sha256(password) }).then(response => {
         const token = response.data.token
         commit('SET_TOKEN', token)
-        commit('SET_PASSWORD', password)
+        commit('SET_PASSWORD', js_sha256.sha256(password))
         setToken(token)
+        setPassword(js_sha256.sha256(password))
         resolve()
       }).catch(error => {
         reject(error)
@@ -75,6 +77,7 @@ const actions = {
     commit('SET_TOKEN', 'hello')
     commit('SET_ROLES', ['administrator'])
     setToken('hello')
+    setPassword(js_sha256.sha256('hello'))
   },
 
   tmpGetInfo({ commit, state }) {
@@ -121,6 +124,7 @@ const actions = {
       commit('SET_TOKEN', '')
       commit('SET_ROLES', [])
       removeToken()
+      removePassword()
       resetRouter()
 
       // reset visited views and cached views
@@ -137,6 +141,22 @@ const actions = {
       activation({ phone: phone, email: email, password: state.password }).then(response => {
         Message({
           message: '成功激活用户！',
+          type: 'success',
+          duration: 5 * 1000
+        })
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  password({ commit }, passwordInfo) {
+    return new Promise((resolve, reject) => {
+      const { newPassword } = passwordInfo
+      password({ password: js_sha256.sha256(newPassword) }).then(response => {
+        Message({
+          message: '成功修改密码！',
           type: 'success',
           duration: 5 * 1000
         })

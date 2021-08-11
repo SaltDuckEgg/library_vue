@@ -87,7 +87,6 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
-import js_sha256 from 'js-sha256'
 
 export default {
   name: 'Login',
@@ -168,8 +167,8 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          const origin_password = this.loginForm.password
-          this.loginForm.password = js_sha256.sha256(this.loginForm.password)
+          // const origin_password = this.loginForm.password
+          // this.loginForm.password = js_sha256.sha256(this.loginForm.password)
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
@@ -178,7 +177,7 @@ export default {
             .catch(() => {
               this.loading = false
             })
-          this.loginForm.password = origin_password
+          // this.loginForm.password = origin_password
         } else {
           console.log('error submit!!')
           return false

@@ -49,3 +49,11 @@ export function activation(data) {
     data: data
   })
 }
+
+export function password(data) {
+  return request({
+    url: 'http://124.71.225.17:8000/user/password/',
+    method: 'post',
+    data: data
+  })
+}

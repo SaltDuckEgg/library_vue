@@ -119,7 +119,7 @@
       <!--        </div>-->
       <!--      </el-dialog>-->
       <el-dialog title="填写用户信息" :visible.sync="dialogFormVisible">
-        <el-form ref="activationForm" :model="activationForm" :rules="rules">
+        <el-form ref="activationForm" :model="activationForm" :rules="activationRules">
           <el-form-item label="手机号码" :label-width="formLabelWidth" prop="phone">
             <el-input v-model="activationForm.phone" autocomplete="off" />
           </el-form-item>
@@ -129,7 +129,24 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" :loading="loading" @click="handleSubmit">确 定</el-button>
+          <el-button type="primary" :loading="loading" @click="activationSubmit">确 定</el-button>
+        </div>
+      </el-dialog>
+      <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
+        <el-form ref="passwordForm" :model="passwordForm" :rules="passwordRules">
+          <el-form-item label="旧密码" :label-width="formLabelWidth" prop="oldPassword">
+            <el-input v-model="passwordForm.oldPassword" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="新密码" :label-width="formLabelWidth" prop="newPassword">
+            <el-input v-model="passwordForm.newPassword" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="确认密码" :label-width="formLabelWidth" prop="repeatPassword">
+            <el-input v-model="passwordForm.repeatPassword" autocomplete="off" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" :loading="loading" @click="passwordSubmit">确 定</el-button>
         </div>
       </el-dialog>
     </el-row>
@@ -139,6 +156,7 @@
 <script>
 import userAvatar from './userAvatar'
 import { Message } from 'element-ui'
+import js_sha256 from 'js-sha256'
 
 export default {
   name: 'Detail',
@@ -154,6 +172,27 @@ export default {
     const validateEmail = (rule, value, callback) => {
       if (!(/^[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/.test(value))) {
         callback(new Error('请输入正确的邮箱'))
+      } else {
+        callback()
+      }
+    }
+    const validateOldPassword = (rule, value, callback) => {
+      if (js_sha256.sha256(value) !== this.$store.getters.password) {
+        callback(new Error('旧密码错误'))
+      } else {
+        callback()
+      }
+    }
+    const validateNewPassword = (rule, value, callback) => {
+      if (!(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value))) {
+        callback(new Error('长度至少为6位，且需包含数字和字母'))
+      } else {
+        callback()
+      }
+    }
+    const validateRepeatPassword = (rule, value, callback) => {
+      if (value !== this.passwordForm.newPassword) {
+        callback(new Error('两次输入的密码不一致'))
       } else {
         callback()
       }
@@ -175,10 +214,20 @@ export default {
         // academy: '',
         // class_num: ''
       },
+      passwordForm: {
+        oldPassword: '',
+        newPassword: '',
+        repeatPassword: ''
+      },
       formLabelWidth: '100px',
-      rules: {
-        phone: [{ required: true, trigger: 'change', validator: validatePhone }],
+      activationRules: {
+        phone: [{ required: true, trigger: 'blur', validator: validatePhone }],
         email: [{ trigger: 'blur', validator: validateEmail }]
+      },
+      passwordRules: {
+        oldPassword: [{ required: true, trigger: 'blur', validator: validateOldPassword }],
+        newPassword: [{ required: true, trigger: 'blur', validator: validateNewPassword }],
+        repeatPassword: [{ required: true, trigger: 'blur', validator: validateRepeatPassword }]
       }
     }
   },
@@ -195,7 +244,7 @@ export default {
         })
       }
     },
-    handleSubmit() {
+    activationSubmit() {
       this.$refs.activationForm.validate(async valid => {
         if (valid) {
           this.loading = true
@@ -203,7 +252,30 @@ export default {
           await this.$store.dispatch('user/getInfo')
           await this.getUser()
         } else {
-          console.log('error submit!!')
+          Message({
+            message: '请确认输入用户信息正确！',
+            type: 'error',
+            duration: 5 * 1000
+          })
+          return false
+        }
+      })
+      this.loading = false
+      this.dialogFormVisible = false
+    },
+    passwordSubmit() {
+      this.$refs.passwordForm.validate(async valid => {
+        if (valid) {
+          this.loading = true
+          await this.$store.dispatch('user/password', this.passwordForm)
+          await this.$store.dispatch('user/getInfo')
+          await this.getUser()
+        } else {
+          Message({
+            message: '请确认输入密码信息正确！',
+            type: 'error',
+            duration: 5 * 1000
+          })
           return false
         }
       })

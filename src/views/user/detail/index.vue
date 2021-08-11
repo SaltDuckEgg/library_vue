@@ -34,42 +34,42 @@
               <li class="list-group-item">
                 <svg-icon icon-class="user" />
                 姓名
-                <div class="pull-right">{{ user.name }}</div>
+                <div class="pull-right">{{ this.$store.getters.name }}</div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="sex" />
                 性别
-                <div class="pull-right">{{ user.sex }}</div>
+                <div class="pull-right">{{ this.$store.getters.sex }}</div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="username" />
                 学号
-                <div class="pull-right">{{ user.username }}</div>
+                <div class="pull-right">{{ this.$store.getters.username }}</div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="phone" />
                 手机号码
-                <div class="pull-right">{{ user.phone }}</div>
+                <div class="pull-right">{{ this.$store.getters.phone }}</div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="email" />
                 用户邮箱
-                <div class="pull-right">{{ user.email }}</div>
+                <div class="pull-right">{{ this.$store.getters.email }}</div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="tree" />
                 学院
-                <div class="pull-right">{{ user.academy }}</div>
+                <div class="pull-right">{{ this.$store.getters.academy }}</div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="class" />
                 班级
-                <div class="pull-right">{{ user.class_num }}</div>
+                <div class="pull-right">{{ this.$store.getters.class_num }}</div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="peoples" />
                 用户权限
-                <div class="pull-right">{{ user.roles }}</div>
+                <div class="pull-right">{{ roles_dict[this.$store.getters.roles] }}</div>
               </li>
             </ul>
           </div>
@@ -145,14 +145,14 @@ export default {
   components: { userAvatar },
   data() {
     const validatePhone = (rule, value, callback) => {
-      if (/^1[3-9]\d{9}$/.test(value) === false) {
+      if (!(/^1[3-9]\d{9}$/.test(value))) {
         callback(new Error('请输入正确的手机号'))
       } else {
         callback()
       }
     }
     const validateEmail = (rule, value, callback) => {
-      if (/^[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/.test(value)) {
+      if (!(/^[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/.test(value))) {
         callback(new Error('请输入正确的邮箱'))
       } else {
         callback()
@@ -160,16 +160,20 @@ export default {
     }
     return {
       user: {},
+      roles_dict: {
+        'inactive_user': '未激活用户',
+        'active_user': '正式用户',
+        'administrator': '管理员'
+      },
       dialogFormVisible: false,
       loading: false,
       activationForm: {
-        name: '',
-        sex: '',
+        // name: '',
+        // sex: '',
         phone: '',
-        region: '',
-        email: '',
-        academy: '',
-        class_num: ''
+        email: ''
+        // academy: '',
+        // class_num: ''
       },
       formLabelWidth: '100px',
       rules: {
@@ -183,11 +187,6 @@ export default {
   },
   methods: {
     getUser() {
-      const roles_dict = {
-        'inactive_user': '未激活用户',
-        'active_user': '正式用户',
-        'administrator': '管理员'
-      }
       if (this.$store.getters.roles[0] === 'inactive_user') {
         Message({
           message: '请您先激活账号，以便使用更多功能！',
@@ -195,31 +194,20 @@ export default {
           duration: 5 * 1000
         })
       }
-      this.user.username = this.$store.getters.username
-      this.user.sex = this.$store.getters.sex === 'male' ? '男' : '女'
-      this.user.name = this.$store.getters.name
-      this.user.phone = this.$store.getters.phone
-      this.user.email = this.$store.getters.email
-      this.user.academy = this.$store.getters.academy
-      this.user.class_num = this.$store.getters.class_num
-      this.user.roles = roles_dict[this.$store.getters.roles]
     },
     handleSubmit() {
-      this.$refs.activationForm.validate(valid => {
+      this.$refs.activationForm.validate(async valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/activation', this.activationForm)
-            .then(() => {
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
+          await this.$store.dispatch('user/activation', this.activationForm)
+          await this.$store.dispatch('user/getInfo')
+          await this.getUser()
         } else {
           console.log('error submit!!')
           return false
         }
       })
+      this.loading = false
       this.dialogFormVisible = false
     }
   }

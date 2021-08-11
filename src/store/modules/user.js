@@ -1,12 +1,14 @@
-import { login, getInfo } from '@/api/user'
+import { login, getInfo, activation } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
+import { Message } from 'element-ui'
 
 const state = {
   token: getToken(),
   name: '',
   sex: '',
   username: '',
+  password: '',
   phone: '',
   email: '',
   academy: '',
@@ -27,6 +29,9 @@ const mutations = {
   },
   SET_USERNAME: (state, username) => {
     state.username = username
+  },
+  SET_PASSWORD: (state, password) => {
+    state.password = password
   },
   SET_PHONE: (state, phone) => {
     state.phone = phone
@@ -55,9 +60,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
         const token = response.data.token
-        // const roles = response.data.roles
         commit('SET_TOKEN', token)
-        // commit('SET_ROLES', roles)
+        commit('SET_PASSWORD', password)
         setToken(token)
         resolve()
       }).catch(error => {
@@ -124,6 +128,22 @@ const actions = {
       dispatch('tagsView/delAllViews', null, { root: true })
 
       resolve()
+    })
+  },
+
+  activation({ commit, state }, activationInfo) {
+    return new Promise((resolve, reject) => {
+      const { phone, email } = activationInfo
+      activation({ phone: phone, email: email, password: state.password }).then(response => {
+        Message({
+          message: '成功激活用户！',
+          type: 'success',
+          duration: 5 * 1000
+        })
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
     })
   },
 

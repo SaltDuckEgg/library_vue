@@ -10,12 +10,12 @@
       />
       <el-select
         v-model="listQuery.importance"
-        placeholder="Imp"
+        placeholder="类别"
         clearable
         style="width: 90px"
         class="filter-item"
       >
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
+        <el-option v-for="item in categyOptions" :key="item" :label="item" :value="item" />
       </el-select>
       <el-select
         v-model="listQuery.type"
@@ -67,11 +67,10 @@
         @click="handleDownload"
       >Export</el-button>
       <el-checkbox
-        v-model="showReviewer"
         class="filter-item"
         style="margin-left:15px;"
         @change="tableKey=tableKey+1"
-      >reviewer</el-checkbox>
+      >categy</el-checkbox>
     </div>
 
     <el-table
@@ -95,13 +94,15 @@
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>`
       <el-table-column label="更新日期" width="150px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <!-- <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>`
+          -->
+          <span>{{ row.timestamp }}</span>`
         </template>
       </el-table-column>
-      <el-table-column label="书名" min-width="150px">
+      <el-table-column label="书名" width="150px">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>
           <!-- <el-tag>{{ row.type | typeFilter }}</el-tag> -->
@@ -112,21 +113,30 @@
           <span>{{ row.author }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="类别" width="110px" align="center">
+
+      <el-table-column label="出版社" class-name="status-col" width="100">
         <template slot-scope="{row}">
-          <span style="color:red;">{{ row.reviewer }}</span>
+          <span>{{ row.pub }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="Imp" width="80px">
+      <el-table-column label="类别" width="110px" align="center">
         <template slot-scope="{row}">
-          <svg-icon
-            v-for="n in + row.importance"
-            :key="n"
-            icon-class="star"
-            class="meta-item__icon"
-          />
+          <span class="link-type" @click="handleUpdate(row)">{{ row.categy }}</span>
         </template>
-      </el-table-column>-->
+      </el-table-column>
+
+      <el-table-column label="关键词" class-name="status-col" width="min-150">
+        <template slot-scope="{row}">
+          <span>{{ row.kw }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="分类号" class-name="status-col" width="150">
+        <template slot-scope="{row}">
+          <span>{{ row.clsify_num }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column label="库存" align="center" width="95">
         <template slot-scope="{row}">
           <span
@@ -137,21 +147,18 @@
           <span v-else>0</span>
         </template>
       </el-table-column>
-      <el-table-column label="借出" align="center" width="95">
+      <el-table-column label="总数" align="center" width="95">
         <template slot-scope="{row}">
-          <span
-            v-if="row.pageviews"
-            class="link-type"
-            @click="handleFetchPv(row.pageviews)"
-          >{{ row.pageviews }}</span>
+          <span v-if="row.total" class="link-type" @click="handleFetchPv(row.total)">{{ row.total }}</span>
           <span v-else>0</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" class-name="status-col" width="100">
+      <!-- <el-table-column label="状态" class-name="status-col" width="100">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag>
         </template>
-      </el-table-column>
+      </el-table-column>-->
+
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">Edit</el-button>
@@ -218,7 +225,7 @@
             <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Imp">
+        <el-form-item label="类别">
           <el-rate
             v-model="temp.importance"
             :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
@@ -257,7 +264,7 @@
 import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
 import { ffetchList, dataTranFormer, dataTest } from '@/api/book'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
+import { parseTime, pparseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 const calendarTypeOptions = [
@@ -299,18 +306,20 @@ export default {
       total: 0,
       listLoading: true,
       listQuery: {
-        page: 1,
-        limit: 20,
+        id: 1,
+        author: 20,
         importance: undefined,
         title: undefined,
         type: undefined,
         sort: '+id'
       },
       importanceOptions: [1, 2, 3],
+      categyOptions: ['G 古典文学', 'Z 传记', 'W 外国名著', 'H 回忆录', 'W 文学', 'C 成长', 'H 绘本', 'K 科幻', 'L 历史', 'X 现当代文学', 'X 小说',
+        'X 心理学', 'Q 青春', 'S 诗歌', 'M 漫画', 'S 随笔', 'T 推理', 'W 文化', 'Y 言情', 'X 悬疑', 'Y 艺术', 'S 社会学'].sort(),
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false,
+      showReviewer: true,
       temp: {
         id: undefined,
         importance: 1,
@@ -346,7 +355,7 @@ export default {
       this.listLoading = true
       ffetchList(this.listQuery).then(response => {
         // this.list = dataTest()
-        this.list = dataTranFormer(response.data)
+        this.list = dataTranFormer(response.data.results)
         this.total = this.list.length
         console.log(this.list)
         // this.total = response.data.total

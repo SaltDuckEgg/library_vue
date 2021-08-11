@@ -4,7 +4,27 @@
       <el-col :span="16" :xs="24">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>个人信息</span>
+            <div style="margin-bottom: 5px">
+              <span style="font-size: x-large">个人信息</span>
+              <el-button
+                v-if="this.$store.getters.roles[0] === 'inactive_user'"
+                size="mini"
+                type="primary"
+                class="pull-right"
+                @click="dialogFormVisible = true"
+              >
+                激活
+              </el-button>
+              <el-button
+                v-if="this.$store.getters.roles[0] !== 'inactive_user'"
+                size="mini"
+                type="primary"
+                class="pull-right"
+                @click="dialogFormVisible = true"
+              >
+                修改密码
+              </el-button>
+            </div>
           </div>
           <div>
             <div class="text-center">
@@ -53,13 +73,6 @@
               </li>
             </ul>
           </div>
-          <el-button
-            v-if="this.$store.getters.roles[0] === 'inactive_user'"
-            type="primary"
-            @click="dialogTableVisible = true"
-          >
-            激活
-          </el-button>
         </el-card>
       </el-col>
       <!--      <el-col :span="18" :xs="24">-->
@@ -77,21 +90,46 @@
       <!--          </el-tabs>-->
       <!--        </el-card>-->
       <!--      </el-col>-->
-      <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
-        <el-form :model="form">
-          <el-form-item label="活动名称" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off" />
+
+      <!--      <el-dialog title="填写用户信息" :visible.sync="dialogFormVisible">-->
+      <!--        <el-form :model="form" :rules="rules">-->
+      <!--          <el-form-item label="姓名" :label-width="formLabelWidth">-->
+      <!--            <el-input v-model="form.name" autocomplete="off" />-->
+      <!--          </el-form-item>-->
+      <!--          <el-form-item label="性别" :label-width="formLabelWidth">-->
+      <!--            <el-radio v-model="form.sex" label="male">男</el-radio>-->
+      <!--            <el-radio v-model="form.sex" label="female">女</el-radio>-->
+      <!--          </el-form-item>-->
+      <!--          <el-form-item label="手机号码" :label-width="formLabelWidth">-->
+      <!--            <el-input v-model="form.phone" autocomplete="off" />-->
+      <!--          </el-form-item>-->
+      <!--          <el-form-item label="邮箱" :label-width="formLabelWidth">-->
+      <!--            <el-input v-model="form.email" autocomplete="off" />-->
+      <!--          </el-form-item>-->
+      <!--          <el-form-item label="学院" :label-width="formLabelWidth">-->
+      <!--            <el-input v-model="form.academy" autocomplete="off" />-->
+      <!--          </el-form-item>-->
+      <!--          <el-form-item label="班级" :label-width="formLabelWidth">-->
+      <!--            <el-input v-model="form.class_num" autocomplete="off" />-->
+      <!--          </el-form-item>-->
+      <!--        </el-form>-->
+      <!--        <div slot="footer" class="dialog-footer">-->
+      <!--          <el-button @click="dialogFormVisible = false">取 消</el-button>-->
+      <!--          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>-->
+      <!--        </div>-->
+      <!--      </el-dialog>-->
+      <el-dialog title="填写用户信息" :visible.sync="dialogFormVisible">
+        <el-form ref="activationForm" :model="activationForm" :rules="rules">
+          <el-form-item label="手机号码" :label-width="formLabelWidth" prop="phone">
+            <el-input v-model="activationForm.phone" autocomplete="off" />
           </el-form-item>
-          <el-form-item label="活动区域" :label-width="formLabelWidth">
-            <el-select v-model="form.region" placeholder="请选择活动区域">
-              <el-option label="区域一" value="shanghai" />
-              <el-option label="区域二" value="beijing" />
-            </el-select>
+          <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
+            <el-input v-model="activationForm.email" autocomplete="off" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+          <el-button type="primary" :loading="loading" @click="handleSubmit">确 定</el-button>
         </div>
       </el-dialog>
     </el-row>
@@ -106,20 +144,38 @@ export default {
   name: 'Detail',
   components: { userAvatar },
   data() {
+    const validatePhone = (rule, value, callback) => {
+      if (/^1[3-9]\d{9}$/.test(value) === false) {
+        callback(new Error('请输入正确的手机号'))
+      } else {
+        callback()
+      }
+    }
+    const validateEmail = (rule, value, callback) => {
+      if (/^[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/.test(value)) {
+        callback(new Error('请输入正确的邮箱'))
+      } else {
+        callback()
+      }
+    }
     return {
       user: {},
       dialogFormVisible: false,
-      form: {
+      loading: false,
+      activationForm: {
         name: '',
+        sex: '',
+        phone: '',
         region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        email: '',
+        academy: '',
+        class_num: ''
       },
-      formLabelWidth: '120px'
+      formLabelWidth: '100px',
+      rules: {
+        phone: [{ required: true, trigger: 'change', validator: validatePhone }],
+        email: [{ trigger: 'blur', validator: validateEmail }]
+      }
     }
   },
   created() {
@@ -147,6 +203,24 @@ export default {
       this.user.academy = this.$store.getters.academy
       this.user.class_num = this.$store.getters.class_num
       this.user.roles = roles_dict[this.$store.getters.roles]
+    },
+    handleSubmit() {
+      this.$refs.activationForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+          this.$store.dispatch('user/activation', this.activationForm)
+            .then(() => {
+              this.loading = false
+            })
+            .catch(() => {
+              this.loading = false
+            })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+      this.dialogFormVisible = false
     }
   }
 }

@@ -19,7 +19,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="学号"
           name="username"
           type="text"
           tabindex="1"
@@ -37,7 +37,7 @@
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="密码"
             name="password"
             tabindex="2"
             autocomplete="on"
@@ -109,8 +109,8 @@ export default {
     }
     return {
       loginForm: {
-        username: '8207181829',
-        password: '8207181829'
+        username: '8207181529',
+        password: '8207181529'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -168,6 +168,7 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
+          const origin_password = this.loginForm.password
           this.loginForm.password = js_sha256.sha256(this.loginForm.password)
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
@@ -177,6 +178,7 @@ export default {
             .catch(() => {
               this.loading = false
             })
+          this.loginForm.password = origin_password
         } else {
           console.log('error submit!!')
           return false

@@ -1,4 +1,4 @@
-import { login, getInfo, activation, password } from '@/api/user'
+import { login, getInfo, activate, password, modify } from '@/api/user'
 import { getToken, setToken, removeToken, getPassword, setPassword, removePassword } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { Message } from 'element-ui'
@@ -135,10 +135,10 @@ const actions = {
     })
   },
 
-  activation({ commit, state }, activationInfo) {
+  activate({ commit, state }, activationInfo) {
     return new Promise((resolve, reject) => {
       const { phone, email } = activationInfo
-      activation({ phone: phone, email: email, password: state.password }).then(response => {
+      activate({ phone: phone, email: email, password: state.password }).then(response => {
         Message({
           message: '成功激活用户！',
           type: 'success',
@@ -157,6 +157,22 @@ const actions = {
       password({ password: js_sha256.sha256(newPassword) }).then(response => {
         Message({
           message: '成功修改密码！',
+          type: 'success',
+          duration: 5 * 1000
+        })
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  modify({ commit }, modifyInfo) {
+    return new Promise((resolve, reject) => {
+      const { phone, email } = modifyInfo
+      modify({ phone: phone, email: email }).then(response => {
+        Message({
+          message: '修改成功！',
           type: 'success',
           duration: 5 * 1000
         })

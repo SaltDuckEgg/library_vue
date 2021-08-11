@@ -42,7 +42,7 @@ export function addSaveFile(data) {
   })
 }
 
-export function activation(data) {
+export function activate(data) {
   return request({
     url: 'http://124.71.225.17:8000/user/activate/',
     method: 'post',
@@ -57,3 +57,12 @@ export function password(data) {
     data: data
   })
 }
+
+export function modify(data) {
+  return request({
+    url: 'http://124.71.225.17:8000/user/detail/',
+    method: 'post',
+    data: data
+  })
+}
+

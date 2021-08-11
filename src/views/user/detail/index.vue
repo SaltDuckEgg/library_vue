@@ -11,7 +11,7 @@
                 size="mini"
                 type="primary"
                 class="pull-right"
-                @click="dialogFormVisible = true"
+                @click="activationFormVisible = true"
               >
                 激活
               </el-button>
@@ -20,7 +20,7 @@
                 size="mini"
                 type="primary"
                 class="pull-right"
-                @click="dialogFormVisible = true"
+                @click="passwordFormVisible = true"
               >
                 修改密码
               </el-button>
@@ -39,7 +39,7 @@
               <li class="list-group-item">
                 <svg-icon icon-class="sex" />
                 性别
-                <div class="pull-right">{{ this.$store.getters.sex }}</div>
+                <div class="pull-right">{{ this.$store.getters.sex === 'male' ? '男' : '女' }}</div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="username" />
@@ -49,12 +49,26 @@
               <li class="list-group-item">
                 <svg-icon icon-class="phone" />
                 手机号码
-                <div class="pull-right">{{ this.$store.getters.phone }}</div>
+                <div class="pull-right">
+                  {{ this.$store.getters.phone }}
+                  <svg-icon
+                    v-if="this.$store.getters.roles[0] !== 'inactive_user'"
+                    icon-class="edit"
+                    @click="phoneFormVisible = true"
+                  />
+                </div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="email" />
-                用户邮箱
-                <div class="pull-right">{{ this.$store.getters.email }}</div>
+                邮箱
+                <div class="pull-right">
+                  {{ this.$store.getters.email }}
+                  <svg-icon
+                    v-if="this.$store.getters.roles[0] !== 'inactive_user'"
+                    icon-class="edit"
+                    @click="emailFormVisible = true"
+                  />
+                </div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="tree" />
@@ -118,8 +132,8 @@
       <!--          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>-->
       <!--        </div>-->
       <!--      </el-dialog>-->
-      <el-dialog title="填写用户信息" :visible.sync="dialogFormVisible">
-        <el-form ref="activationForm" :model="activationForm" :rules="activationRules">
+      <el-dialog title="填写用户信息" :visible.sync="activationFormVisible">
+        <el-form ref="activationForm" :model="activationForm" :rules="activationRules" class="login-form">
           <el-form-item label="手机号码" :label-width="formLabelWidth" prop="phone">
             <el-input v-model="activationForm.phone" autocomplete="off" />
           </el-form-item>
@@ -128,25 +142,47 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button @click="activationFormVisible = false">取 消</el-button>
           <el-button type="primary" :loading="loading" @click="activationSubmit">确 定</el-button>
         </div>
       </el-dialog>
-      <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
+      <el-dialog title="修改密码" :visible.sync="passwordFormVisible">
         <el-form ref="passwordForm" :model="passwordForm" :rules="passwordRules">
           <el-form-item label="旧密码" :label-width="formLabelWidth" prop="oldPassword">
-            <el-input v-model="passwordForm.oldPassword" autocomplete="off" />
+            <el-input v-model="passwordForm.oldPassword" autocomplete="off" show-password />
           </el-form-item>
           <el-form-item label="新密码" :label-width="formLabelWidth" prop="newPassword">
-            <el-input v-model="passwordForm.newPassword" autocomplete="off" />
+            <el-input v-model="passwordForm.newPassword" autocomplete="off" show-password />
           </el-form-item>
           <el-form-item label="确认密码" :label-width="formLabelWidth" prop="repeatPassword">
-            <el-input v-model="passwordForm.repeatPassword" autocomplete="off" />
+            <el-input v-model="passwordForm.repeatPassword" autocomplete="off" show-password />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button @click="passwordFormVisible = false">取 消</el-button>
           <el-button type="primary" :loading="loading" @click="passwordSubmit">确 定</el-button>
+        </div>
+      </el-dialog>
+      <el-dialog title="修改手机号码" :visible.sync="phoneFormVisible">
+        <el-form ref="phoneForm" :model="modifyForm" :rules="phoneRules">
+          <el-form-item label="手机号码" :label-width="formLabelWidth" prop="phone">
+            <el-input v-model="modifyForm.phone" autocomplete="off" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="phoneFormVisible = false">取 消</el-button>
+          <el-button type="primary" :loading="loading" @click="modifySubmit(modifyForm.phone, '')">确 定</el-button>
+        </div>
+      </el-dialog>
+      <el-dialog title="修改邮箱" :visible.sync="emailFormVisible">
+        <el-form ref="emailForm" :model="modifyForm" :rules="emailRules">
+          <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
+            <el-input v-model="modifyForm.email" autocomplete="off" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="emailFormVisible = false">取 消</el-button>
+          <el-button type="primary" :loading="loading" @click="modifySubmit('', modifyForm.email)">确 定</el-button>
         </div>
       </el-dialog>
     </el-row>
@@ -204,7 +240,10 @@ export default {
         'active_user': '正式用户',
         'administrator': '管理员'
       },
-      dialogFormVisible: false,
+      activationFormVisible: false,
+      passwordFormVisible: false,
+      phoneFormVisible: false,
+      emailFormVisible: false,
       loading: false,
       activationForm: {
         // name: '',
@@ -219,6 +258,10 @@ export default {
         newPassword: '',
         repeatPassword: ''
       },
+      modifyForm: {
+        phone: '',
+        email: ''
+      },
       formLabelWidth: '100px',
       activationRules: {
         phone: [{ required: true, trigger: 'blur', validator: validatePhone }],
@@ -228,6 +271,12 @@ export default {
         oldPassword: [{ required: true, trigger: 'blur', validator: validateOldPassword }],
         newPassword: [{ required: true, trigger: 'blur', validator: validateNewPassword }],
         repeatPassword: [{ required: true, trigger: 'blur', validator: validateRepeatPassword }]
+      },
+      phoneRules: {
+        phone: [{ required: true, trigger: 'blur', validator: validatePhone }]
+      },
+      emailRules: {
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }]
       }
     }
   },
@@ -248,7 +297,7 @@ export default {
       this.$refs.activationForm.validate(async valid => {
         if (valid) {
           this.loading = true
-          await this.$store.dispatch('user/activation', this.activationForm)
+          await this.$store.dispatch('user/activate', this.activationForm)
           await this.$store.dispatch('user/getInfo')
           await this.getUser()
         } else {
@@ -261,7 +310,7 @@ export default {
         }
       })
       this.loading = false
-      this.dialogFormVisible = false
+      this.activationFormVisible = false
     },
     passwordSubmit() {
       this.$refs.passwordForm.validate(async valid => {
@@ -280,12 +329,62 @@ export default {
         }
       })
       this.loading = false
-      this.dialogFormVisible = false
+      this.passwordFormVisible = false
+    },
+    modifySubmit(phone, email) {
+      let currentForm
+      if (phone === '') {
+        currentForm = this.$refs.emailForm
+        this.modifyForm.phone = this.$store.getters.phone
+      } else {
+        currentForm = this.$refs.phoneForm
+        this.modifyForm.email = this.$store.getters.email
+      }
+      currentForm.validate(async valid => {
+        if (valid) {
+          this.loading = true
+          await this.$store.dispatch('user/modify', this.modifyForm)
+          await this.$store.dispatch('user/getInfo')
+          await this.getUser()
+        } else {
+          Message({
+            message: '请确认输入信息正确！',
+            type: 'error',
+            duration: 5 * 1000
+          })
+          return false
+        }
+      })
+      this.loading = false
+      this.emailFormVisible = false
+      this.phoneFormVisible = false
     }
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
+$bg:#2d3a4b;
+$dark_gray:#889aa4;
+$light_gray:#eee;
+
+.svg-container {
+  //padding: 6px 5px 6px 15px;
+  color: $dark_gray;
+  vertical-align: middle;
+  width: 30px;
+  display: inline-block;
+}
+
+.show-pwd {
+  position: absolute;
+  right: 10px;
+  top: 7px;
+  font-size: 16px;
+  color: $dark_gray;
+  cursor: pointer;
+  user-select: none;
+}
 
 </style>

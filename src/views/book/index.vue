@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+      <!--  <el-autocomplete
+        v-model="listQuery.title"
+        class="filter-item"
+        style="width: 200px;"
+        :fetch-suggestions="querySearch"
+        placeholder="书名"
+        @keyup.enter.native="handleFilter"
+      />-->
       <el-input
         v-model="listQuery.title"
         placeholder="书名"
@@ -69,6 +77,7 @@
         class="filter-item"
         type="primary"
         icon="el-icon-search"
+        plain
         @click="handleFilter"
       >搜索</el-button>
       <el-button
@@ -76,6 +85,7 @@
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
+        plain
         @click="handleCreate"
       >增加</el-button>
       <el-button
@@ -84,6 +94,7 @@
         class="filter-item"
         type="success"
         icon="el-icon-download"
+        plain
         @click="handleDownload"
       >导出</el-button>
       <!-- <el-checkbox
@@ -121,32 +132,40 @@
           <!-- <span>{{ row.timestamp }}</span>` -->
         </template>
       </el-table-column>
-      <el-table-column label="书名" width="150px">
+      <el-table-column label="书名" min-width="150px">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>
-          <!-- <el-tag>{{ row.type | typeFilter }}</el-tag> -->
+          <!-- <el-tag>{{ row.categy }}</el-tag>
+          -->
+          <el-tag
+            effect="plain"
+            type="danger"
+            size="mini"
+            class="link-type"
+            @click="handleUpdate(row)"
+          >{{ row.categy }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="作者" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span class="link-type" style="color:black;" @click="handleUpdate(row)">{{ row.author }}</span>
         </template>
       </el-table-column>
 
       <el-table-column label="出版社" class-name="status-col" width="100">
         <template slot-scope="{row}">
-          <span>{{ row.pub }}</span>
+          <span class="link-type" style="color:black;" @click="handleUpdate(row)">{{ row.pub }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="类别" width="110px" align="center">
+      <!-- <el-table-column label="类别" width="110px" align="center">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleUpdate(row)">{{ row.categy }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
 
-      <el-table-column label="关键词" class-name="status-col" min-width="150">
+      <el-table-column label="关键词" class-name="status-col" min-width="200">
         <template slot-scope="{row}">
-          <span>{{ row.kw }}</span>
+          <span class="link-type" style="color:black;" @click="handleUpdate(row)">{{ row.kw }}</span>
         </template>
       </el-table-column>
 
@@ -158,21 +177,13 @@
 
       <el-table-column label="库存" align="center" width="95">
         <template slot-scope="{row}">
-          <span
-            v-if="row.pageviews"
-            class="link-type"
-            @click="handleFetchPv(row.pageviews)"
-          >{{ row.pageviews }}</span>
+          <span v-if="row.pageviews" class="link-type">{{ row.pageviews }}</span>
           <span v-else>0</span>
         </template>
       </el-table-column>
       <el-table-column label="总数" align="center" width="95">
         <template slot-scope="{row}">
-          <span
-            v-if="row.total_pageviews"
-            class="link-type"
-            @click="handleFetchPv(row.total_pageviews)"
-          >{{ row.total_pageviews }}</span>
+          <span v-if="row.total_pageviews" class="link-type">{{ row.total_pageviews }}</span>
           <span v-else>0</span>
         </template>
       </el-table-column>
@@ -182,15 +193,22 @@
         </template>
       </el-table-column>-->
 
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column
+        label="编辑 / 删除"
+        align="center"
+        width="150px"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="{row,$index}">
           <el-button
-            type="warning"
-            size="mini"
-            style="color:white;"
-            icon="el-icon-edit"
+            type="success"
+            style="color:gray;"
+            icon="el-icon-s-tools"
+            plain
+            circle
             @click="handleUpdate(row)"
-          >编辑</el-button>
+          />
+          <!-- size="mini" -->
 
           <!-- <el-button
             v-if="row.status!='published'"
@@ -204,13 +222,19 @@
             size="mini"
             @click="handleModifyStatus(row,'draft')"
           >Draft</el-button>-->
-          <el-button
-            style="color:white;"
-            size="mini"
+          <!-- <el-button
+            style="color:gray;"
             type="danger"
-            icon="el-icon-delete"
+            icon="el-icon-error"
+            plain
+          >删除</el-button>-->
+          <el-button
+            type="danger"
+            icon="el-icon-delete-solid"
+            circle
+            plain
             @click="handleDelete(row,$index)"
-          >删除</el-button>
+          />
         </template>
       </el-table-column>
     </el-table>
@@ -303,11 +327,12 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
-import { ffetchList, dataTranFormer, dataTest, ffetchList_fuzzy, updateBook, deleteBook, createBook } from '@/api/book'
+import { ffetchList, dataTranFormer, dataTest, ffetchList_fuzzy, updateBook, deleteBook, createBook, fetchAlltitle } from '@/api/book'
 import waves from '@/directive/waves' // waves directive
-import { parseTime, pparseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { parseTime } from '@/utils'
+// import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+
+import Pagination from '@/views/book/Pagination' // secondary package based on el-pagination
 
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },
@@ -343,6 +368,9 @@ export default {
   },
   data() {
     return {
+      restaurants: [{ 'value': '三全鲜食（北新泾店）' }, { 'value': '长宁区新渔路144号' }],
+      // restaurants: this.a(),
+
       tableKey: 0,
       list: null,
       total: 0,
@@ -354,7 +382,9 @@ export default {
         author: undefined,
         // importance: undefined,
         title: undefined,
-        type: undefined
+        type: undefined,
+        page_size: 20,
+        page: 1
         // sort: '+id'
       },
 
@@ -395,16 +425,24 @@ export default {
   },
   created() {
     console.log('created() ')
+
     this.getList()
+  },
+  mounted() {
+    // this.restaurants = this.loadAll()
+    // this.restaurants = fetchAlltitle()
+
   },
   methods: {
     getList() {
       console.log('getList()')
+      // this.allTitle = fetchAlltitle()
+
       this.listLoading = true
       ffetchList(this.listQuery).then(response => {
         // this.list = dataTest()
         this.list = dataTranFormer(response.data.results)
-        this.total = this.list.length
+        this.total = response.data.count
         // console.log(this.list)
         // this.total = response.data.total
 
@@ -472,22 +510,22 @@ export default {
       //   type: ''
       // }
       this.temp = {
-        display_time: ' ',
-        categy: ' ',
-        status: ' ',
+        display_time: '暂无',
+        categy: '暂无',
+        status: '暂无',
         timestamp: new Date().toString(),
-        title: ' ',
-        pub: ' ',
-        kw: ' ',
-        clsify_num: ' ',
-        summary: ' ',
-        author: ' ',
-        id: ' ',
+        title: '暂无',
+        pub: '暂无',
+        kw: '暂无',
+        clsify_num: '暂无',
+        summary: '暂无 ',
+        author: '暂无',
+        id: '暂无',
         pageviews: 0,
         total_pageviews: 0,
         price: '0.0',
-        isbn: ' ',
-        press: ' '
+        isbn: '暂无',
+        press: '暂无'
 
       }
     },
@@ -535,6 +573,8 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          console.log('debug tempData')
+          console.log(tempData)
           updateBook(tempData).then((response) => {
             console.log(response)
             const index = this.list.findIndex(v => v.id === this.temp.id)
@@ -560,13 +600,8 @@ export default {
       })
       // this.list.splice(index, 1)
       deleteBook(row)
-    },
-    handleFetchPv(pv) {
-      console.log('handleFetchPv(pv)')
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
+      this.listQuery.page = 1
+      self.ffetchList(this.listQuery)
     },
     handleDownload() {
       console.log('handleDownload() ')
@@ -599,9 +634,27 @@ export default {
       const sort = this.list.sort
       // console.log(sort)
       return sort === `+${key}` ? 'ascending' : 'descending'
+    },
+    querySearch(queryString, cb) {
+      var restaurants = this.restaurants
+      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter(queryString) {
+      return (restaurant) => {
+        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
+      }
+    },
+    loadAll() {
+      // console.log(1)
+      // return [{ 'value': '三全鲜食（北新泾店）', 'address': '长宁区新渔路144号' }]
+      return [{ 'value': '三全鲜食（北新泾店）' }, { 'value': '长宁区新渔路144号' }]
     }
+
   }
 }
+
 </script>
 
 <style lang="scss" scoped>

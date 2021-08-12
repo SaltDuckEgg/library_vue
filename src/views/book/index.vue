@@ -3,21 +3,41 @@
     <div class="filter-container">
       <el-input
         v-model="listQuery.title"
-        placeholder="Title"
+        placeholder="书名"
+        style="width: 200px;"
+        class="filter-item"
+        @change="handleFilter"
+        @keyup.enter.native="handleFilter"
+      />
+
+      <el-input
+        v-model="listQuery.author"
+        placeholder="作者"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
       <el-select
-        v-model="listQuery.importance"
+        v-model="listQuery.category"
         placeholder="类别"
         clearable
-        style="width: 90px"
+        style="width: 200px"
         class="filter-item"
+        @change="handleFilter"
       >
         <el-option v-for="item in categyOptions" :key="item" :label="item" :value="item" />
       </el-select>
-      <el-select
+      <el-input
+        v-model="fuzzy"
+        class="filter-item"
+        placeholder="模糊搜索"
+        style="width: 200px;"
+        @keyup.enter.native="handleFilter_fuzzy"
+      />
+
+      <!-- @keyup.enter.native="handleFilter_fuzzy" -->
+
+      <!-- <el-select
         v-model="listQuery.type"
         placeholder="Type"
         clearable
@@ -30,8 +50,8 @@
           :label="item.display_name+'('+item.key+')'"
           :value="item.key"
         />
-      </el-select>
-      <el-select
+      </el-select>-->
+      <!-- <el-select
         v-model="listQuery.sort"
         style="width: 140px"
         class="filter-item"
@@ -43,34 +63,34 @@
           :label="item.label"
           :value="item.key"
         />
-      </el-select>
+      </el-select>-->
       <el-button
         v-waves
         class="filter-item"
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
-      >Search</el-button>
+      >搜索</el-button>
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate"
-      >Add</el-button>
+      >增加</el-button>
       <el-button
         v-waves
         :loading="downloadLoading"
         class="filter-item"
-        type="primary"
+        type="success"
         icon="el-icon-download"
         @click="handleDownload"
-      >Export</el-button>
-      <el-checkbox
+      >导出</el-button>
+      <!-- <el-checkbox
         class="filter-item"
         style="margin-left:15px;"
         @change="tableKey=tableKey+1"
-      >categy</el-checkbox>
+      >categy</el-checkbox>-->
     </div>
 
     <el-table
@@ -97,9 +117,8 @@
       </el-table-column>`
       <el-table-column label="更新日期" width="150px" align="center">
         <template slot-scope="{row}">
-          <!-- <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>`
-          -->
-          <span>{{ row.timestamp }}</span>`
+          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <!-- <span>{{ row.timestamp }}</span>` -->
         </template>
       </el-table-column>
       <el-table-column label="书名" width="150px">
@@ -125,7 +144,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="关键词" class-name="status-col" width="min-150">
+      <el-table-column label="关键词" class-name="status-col" min-width="150">
         <template slot-scope="{row}">
           <span>{{ row.kw }}</span>
         </template>
@@ -149,7 +168,11 @@
       </el-table-column>
       <el-table-column label="总数" align="center" width="95">
         <template slot-scope="{row}">
-          <span v-if="row.total" class="link-type" @click="handleFetchPv(row.total)">{{ row.total }}</span>
+          <span
+            v-if="row.total_pageviews"
+            class="link-type"
+            @click="handleFetchPv(row.total_pageviews)"
+          >{{ row.total_pageviews }}</span>
           <span v-else>0</span>
         </template>
       </el-table-column>
@@ -161,24 +184,33 @@
 
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">Edit</el-button>
+          <el-button
+            type="warning"
+            size="mini"
+            style="color:white;"
+            icon="el-icon-edit"
+            @click="handleUpdate(row)"
+          >编辑</el-button>
+
           <!-- <el-button
             v-if="row.status!='published'"
             size="mini"
             type="success"
             @click="handleModifyStatus(row,'published')"
-          >Publish</el-button>
-          <el-button
+          >Publish</el-button>-->
+
+          <!-- <el-button
             v-if="row.status!='draft'"
             size="mini"
             @click="handleModifyStatus(row,'draft')"
           >Draft</el-button>-->
           <el-button
-            v-if="row.status!='deleted'"
+            style="color:white;"
             size="mini"
             type="danger"
+            icon="el-icon-delete"
             @click="handleDelete(row,$index)"
-          >Delete</el-button>
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -197,46 +229,56 @@
         :rules="rules"
         :model="temp"
         label-position="left"
-        label-width="70px"
-        style="width: 400px; margin-left:50px;"
+        label-width="80px"
+        style="width: 450px; margin-left:80px;height:1000px;"
       >
-        <el-form-item label="Type" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
-            <el-option
-              v-for="item in calendarTypeOptions"
-              :key="item.key"
-              :label="item.display_name"
-              :value="item.key"
-            />
+        <el-form-item label="书名" prop="title">
+          <el-input v-model="temp.title" />
+        </el-form-item>
+
+        <el-form-item label="作者">
+          <el-input v-model="temp.author" />
+        </el-form-item>
+
+        <el-form-item label="出版社">
+          <el-input v-model="temp.pub" />
+        </el-form-item>
+        <el-form-item label="类别" prop="title">
+          <el-select v-model="temp.categy" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in categyOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Date" prop="timestamp">
+        <el-form-item label="分类号">
+          <el-input v-model="temp.clsify_num" />
+        </el-form-item>
+        <el-form-item label="关键词">
+          <el-input v-model="temp.kw" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" />
+        </el-form-item>
+        <!-- <el-form-item label="总数" prop="title">
+          <el-input v-model="temp.pageviews" />
+        </el-form-item>-->
+        <!-- <el-form-item label="库存" prop="title"> -->
+        <!-- <el-input v-model="temp.total_pageviews" />
+        </el-form-item>-->
+
+        <!-- <el-form-item label="Date" prop="timestamp">
           <el-date-picker
             v-model="temp.timestamp"
             type="datetime"
             placeholder="Please pick a date"
           />
-        </el-form-item>
-        <el-form-item label="Title" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <el-form-item label="Status">
+        </el-form-item>-->
+
+        <!-- <el-form-item label="Status">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
             <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
           </el-select>
-        </el-form-item>
-        <el-form-item label="类别">
-          <el-rate
-            v-model="temp.importance"
-            :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
-            :max="3"
-            style="margin-top:8px;"
-          />
-        </el-form-item>
-        <el-form-item label="Remark">
+        </el-form-item>-->
+
+        <el-form-item label="简介">
           <el-input
-            v-model="temp.remark"
-            :autosize="{ minRows: 2, maxRows: 4}"
+            v-model="temp.summary"
+            :autosize="{ minRows: 3, maxRows: 20}"
             type="textarea"
             placeholder="Please input"
           />
@@ -262,7 +304,7 @@
 
 <script>
 import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
-import { ffetchList, dataTranFormer, dataTest } from '@/api/book'
+import { ffetchList, dataTranFormer, dataTest, ffetchList_fuzzy, updateBook, deleteBook, createBook } from '@/api/book'
 import waves from '@/directive/waves' // waves directive
 import { parseTime, pparseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -305,24 +347,30 @@ export default {
       list: null,
       total: 0,
       listLoading: true,
+      fuzzy: '',
       listQuery: {
-        id: 1,
-        author: 20,
-        importance: undefined,
+        category: undefined,
+        book_id: undefined,
+        author: undefined,
+        // importance: undefined,
         title: undefined,
-        type: undefined,
-        sort: '+id'
+        type: undefined
+        // sort: '+id'
       },
-      importanceOptions: [1, 2, 3],
-      categyOptions: ['G 古典文学', 'Z 传记', 'W 外国名著', 'H 回忆录', 'W 文学', 'C 成长', 'H 绘本', 'K 科幻', 'L 历史', 'X 现当代文学', 'X 小说',
-        'X 心理学', 'Q 青春', 'S 诗歌', 'M 漫画', 'S 随笔', 'T 推理', 'W 文化', 'Y 言情', 'X 悬疑', 'Y 艺术', 'S 社会学'].sort(),
+
+      // importanceOptions: [1, 2, 3],
+      // categyOptions: ['G 古典文学', 'Z 传记', 'W 外国名著', 'H 回忆录', 'W 文学', 'C 成长', 'H 绘本', 'K 科幻', 'L 历史', 'X 现当代文学', 'X 小说',
+      //   'X 心理学', 'Q 青春', 'S 诗歌', 'M 漫画', 'S 随笔', 'T 推理', 'W 文化', 'Y 言情', 'X 悬疑', 'Y 艺术', 'S 社会学'].sort(),
+      categyOptions: ['古典文学', '传记', '外国名著', '回忆录', '文学', '成长', '绘本', '科幻', '历史', '现当代文学', '小说',
+        '心理学', '青春', '诗歌', '漫画', '随笔', '推理', '文化', '言情', '悬疑', '艺术', '社会学'].sort(),
+
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: true,
       temp: {
         id: undefined,
-        importance: 1,
+        // importance: 1,
         remark: '',
         timestamp: new Date(),
         title: '',
@@ -338,9 +386,9 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        categy: [{ required: true, message: '类型未填写', trigger: 'change' }],
+        // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
+        title: [{ required: true, message: '必选项', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -357,7 +405,7 @@ export default {
         // this.list = dataTest()
         this.list = dataTranFormer(response.data.results)
         this.total = this.list.length
-        console.log(this.list)
+        // console.log(this.list)
         // this.total = response.data.total
 
         // Just to simulate the time of the request
@@ -367,9 +415,27 @@ export default {
       })
     },
     handleFilter() {
-      console.log('handleFilter()')
+      // console.log('handleFilter()的参数：')
+      // console.log(this.listQuery)
       this.listQuery.page = 1
       this.getList()
+    },
+    handleFilter_fuzzy() {
+      this.listQuery.page = 1
+      console.log(this.fuzzy)
+      ffetchList_fuzzy(this.fuzzy).then(response => {
+        // this.list = dataTest()
+        console.response
+        this.list = dataTranFormer(response.data.results)
+        this.total = this.list.length
+        // console.log(this.list)
+        // this.total = response.data.total
+
+        // Just to simulate the time of the request
+        // setTimeout(() => {
+        //   this.listLoading = false
+        // }, 1.5 * 1000)
+      })
     },
     handleModifyStatus(row, status) {
       console.log('handleModifyStatus()')
@@ -397,14 +463,32 @@ export default {
     },
     resetTemp() {
       console.log('resetTemp()')
+      // this.temp = {
+      //   id: undefined,
+      //   remark: '',
+      //   timestamp: new Date(),
+      //   title: '',
+      //   status: 'published',
+      //   type: ''
+      // }
       this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
+        display_time: ' ',
+        categy: ' ',
+        status: ' ',
+        timestamp: new Date().toString(),
+        title: ' ',
+        pub: ' ',
+        kw: ' ',
+        clsify_num: ' ',
+        summary: ' ',
+        author: ' ',
+        id: ' ',
+        pageviews: 0,
+        total_pageviews: 0,
+        price: '0.0',
+        isbn: ' ',
+        press: ' '
+
       }
     },
     handleCreate() {
@@ -420,9 +504,9 @@ export default {
       console.log('createData()')
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          createArticle(this.temp).then(() => {
+          // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
+          // this.temp.author = 'vue-element-admin'
+          createBook(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
@@ -451,7 +535,8 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
+          updateBook(tempData).then((response) => {
+            console.log(response)
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
@@ -473,7 +558,8 @@ export default {
         type: 'success',
         duration: 2000
       })
-      this.list.splice(index, 1)
+      // this.list.splice(index, 1)
+      deleteBook(row)
     },
     handleFetchPv(pv) {
       console.log('handleFetchPv(pv)')
@@ -508,10 +594,27 @@ export default {
       }))
     },
     getSortClass(key) {
-      console.log('getSortClass(key)')
-      const sort = this.listQuery.sort
+      console.log('getSortClass()')
+      // console.log(key)
+      const sort = this.list.sort
+      // console.log(sort)
       return sort === `+${key}` ? 'ascending' : 'descending'
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.input {
+  width: "100px";
+  // display: inline-block;
+  // font-size: 14px;
+  // line-height: 50px;
+  // margin-left: 8px;
+
+  // .no-redirect {
+  //   color: #97a8be;
+  //   cursor: text;
+  // }
+}
+</style>

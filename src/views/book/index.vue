@@ -701,7 +701,7 @@ export default {
     //     })
     //   })
     // },
-    delBook(row, index) {
+    deleteBook(row, index) {
       // console.log('handleDelete(row, index)')
       this.$notify({
         title: 'Success',

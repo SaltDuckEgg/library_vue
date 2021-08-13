@@ -33,51 +33,25 @@ export function transformTemp(temp) {
     'summary': temp.summary,
     'total_copies': Number(temp.pageviews),
     'available_copies': Number(temp.pageviews)
-
-    // 'title': 'string'
-    // 'author': 'string',
-    // 'category': 'string',
-    // 'isbn': 'string',
-    // 'press': 'string',
-    // 'classification_num': 'string',
-    // 'key_words': 'string',
-    // 'publish_date': 'string',
-    // 'price': '0.0',
-    // 'summary': 'string',
-    // 'total_copies': 0,
-    // 'available_copies': 0
   }
-  for (var key in d) {
-    if (d[key] === undefined) {
-      d[key] = '暂无'
-    }
-  }
+  // for (var key in d) {
+  //   if (d[key] === undefined) {
+  //     d[key] = '暂无'
+  //   }
+  // }
+  // console.log('transformTemp(temp)')
   // console.log(d)
   return d
 }
 export function updateBook(temp) {
   var r = transformTemp(temp)
-  console.log('debug+++++++++++++++++++')
-  console.log(r)
+  // console.log('updateBook(temp)')
+  // console.log(r)
   return request({
     // headers: { 'Content-Type': 'multipart/form-data' },
     url: baseUrl + 'bookinfo/' + temp.id + '/',
     method: 'put',
     data: r,
-    // {
-    //   'title': temp.title,
-    //   'author': temp.author,
-    // 'category': temp.categy,
-    // 'isbn': temp.isbn,
-    // 'press': temp.press,
-    // 'classification_num': temp.clsify_num,
-    // 'key_words': temp.kw,
-    // 'publish_date': '2021-08-11',
-    // 'price': temp.prcie,
-    // 'summary': temp.summary,
-    // 'total_copies': Number(temp.pageviews),
-    // 'available_copies': Number(temp.pageviews)
-    // },
     book_id: temp.id
 
   }
@@ -93,7 +67,7 @@ export function deleteBook(temp) {
 }
 
 export function createBook(temp) {
-  console.log('createBook()')
+  // console.log('createBook()')
   return request({
     url: baseUrl + 'bookinfo/',
     method: 'post',
@@ -102,17 +76,14 @@ export function createBook(temp) {
 }
 
 export function ffetchList(query) {
-  console.log('ffetchList()')
-  // fetchAlltitle()
+  // console.log('ffetchList()')
 
-  var r = request({
-    url: baseUrl + 'booktitle/',
-    method: 'get'
-  })
-  console.log(r)
-
+  // console.log(query)
+  // console.log(query)
+  // query = { title: '罪与罚', page: 1, pagesize: 20 }
   return request({
-    url: baseUrl + 'bookinfo/' + '?page=' + query.page + '&page_size=' + query.page_size,
+    url: baseUrl + 'bookinfo/',
+    // url: baseUrl + 'bookinfo/',
     method: 'get',
     params: query
 
@@ -120,7 +91,7 @@ export function ffetchList(query) {
 }
 
 export function ffetchList_fuzzy(fuzzy) {
-  console.log('ffetchList_fuzzy()')
+  // console.log('ffetchList_fuzzy()')
   return request({
     url: baseUrl + 'fulltext_retrieval?text=' + fuzzy,
     method: 'get'

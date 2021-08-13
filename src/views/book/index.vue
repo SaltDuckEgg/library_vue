@@ -9,22 +9,31 @@
         placeholder="书名"
         @keyup.enter.native="handleFilter"
       />-->
-      <el-input
+      <!-- <el-input
         v-model="listQuery.title"
         placeholder="书名"
         style="width: 200px;"
         class="filter-item"
-        @change="handleFilter"
-        @keyup.enter.native="handleFilter"
-      />
+        @change="handleFilter_fuzzy"
+        @keyup.enter.native="handleFilter_fuzzy"
+      />-->
 
-      <el-input
+      <!-- <el-input
         v-model="listQuery.author"
         placeholder="作者"
         style="width: 200px;"
         class="filter-item"
-        @keyup.enter.native="handleFilter"
+        @keyup.enter.native="handleFilter_fuzzy"
+      />-->
+      <el-input
+        v-model="fuzzy"
+        class="filter-item"
+        placeholder="搜索"
+        style="width: 200px;"
+        @input="handleFilter_fuzzy"
+        @change="handleFilter_fuzzy"
       />
+
       <el-select
         v-model="listQuery.category"
         placeholder="类别"
@@ -35,13 +44,6 @@
       >
         <el-option v-for="item in categyOptions" :key="item" :label="item" :value="item" />
       </el-select>
-      <el-input
-        v-model="fuzzy"
-        class="filter-item"
-        placeholder="模糊搜索"
-        style="width: 200px;"
-        @keyup.enter.native="handleFilter_fuzzy"
-      />
 
       <!-- @keyup.enter.native="handleFilter_fuzzy" -->
 
@@ -81,6 +83,7 @@
         @click="handleFilter"
       >搜索</el-button>
       <el-button
+        v-if="isAdmin"
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
@@ -89,6 +92,7 @@
         @click="handleCreate"
       >增加</el-button>
       <el-button
+        v-if="isAdmin"
         v-waves
         :loading="downloadLoading"
         class="filter-item"
@@ -114,55 +118,60 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column
-        label="ID"
-        prop="id"
-        sortable="custom"
-        align="center"
-        width="80"
-        :class-name="getSortClass('id')"
-      >
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
+        <!-- :class-name="getSortClass('id')" -->
+
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>`
-      <el-table-column label="更新日期" width="150px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-          <!-- <span>{{ row.timestamp }}</span>` -->
-        </template>
-      </el-table-column>
-      <el-table-column label="书名" min-width="150px">
+      <!-- <el-table-column label="更新日期" width="150px" align="center"> -->
+      <!-- <template slot-scope="{row}"> -->
+      <!-- <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
+      <!-- </template> -->
+      <!-- </el-table-column> -->
+
+      <el-table-column label="书名" min-width="150px" align="center">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>
           <!-- <el-tag>{{ row.categy }}</el-tag>
           -->
-          <el-tag
+          <!-- <el-tag
             effect="plain"
             type="danger"
             size="mini"
             class="link-type"
             @click="handleUpdate(row)"
-          >{{ row.categy }}</el-tag>
+          >{{ row.categy }}</el-tag>-->
         </template>
       </el-table-column>
-      <el-table-column label="作者" width="110px" align="center">
+      <el-table-column label="作者" min-width="150" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" style="color:black;" @click="handleUpdate(row)">{{ row.author }}</span>
+          <span
+            class="link-type"
+            style="color:black;"
+            @click="handleUpdate(row)"
+            v-text="row.author==''?'暂无':row.author"
+          />
         </template>
       </el-table-column>
 
-      <el-table-column label="出版社" class-name="status-col" width="100">
+      <el-table-column label="类别" width="110px" align="center">
+        <template slot-scope="{row}">
+          <!-- <span class="link-type" @click="handleUpdate(row)">{{ row.categy }}</span> -->
+          <el-tag
+            effect="plain"
+            type="danger"
+            class="link-type"
+            @click="handleUpdate(row)"
+          >{{ row.categy }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="出版社" class-name="status-col" min-width="150">
         <template slot-scope="{row}">
           <span class="link-type" style="color:black;" @click="handleUpdate(row)">{{ row.pub }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="类别" width="110px" align="center">
-        <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.categy }}</span>
-        </template>
-      </el-table-column>-->
-
       <el-table-column label="关键词" class-name="status-col" min-width="200">
         <template slot-scope="{row}">
           <span class="link-type" style="color:black;" @click="handleUpdate(row)">{{ row.kw }}</span>
@@ -171,7 +180,7 @@
 
       <el-table-column label="分类号" class-name="status-col" width="150">
         <template slot-scope="{row}">
-          <span>{{ row.clsify_num }}</span>
+          <span v-text="row.clsify_num==''?'暂无':row.clsify_num" />
         </template>
       </el-table-column>
 
@@ -194,7 +203,7 @@
       </el-table-column>-->
 
       <el-table-column
-        label="编辑 / 删除"
+        :label="isAdmin?'编辑 / 删除':'具体信息'"
         align="center"
         width="150px"
         class-name="small-padding fixed-width"
@@ -203,7 +212,7 @@
           <el-button
             type="success"
             style="color:gray;"
-            icon="el-icon-s-tools"
+            :icon="isAdmin?'el-icon-s-tools':'el-icon-info'"
             plain
             circle
             @click="handleUpdate(row)"
@@ -229,6 +238,7 @@
             plain
           >删除</el-button>-->
           <el-button
+            v-if="isAdmin"
             type="danger"
             icon="el-icon-delete-solid"
             circle
@@ -257,15 +267,27 @@
         style="width: 450px; margin-left:80px;height:1000px;"
       >
         <el-form-item label="书名" prop="title">
-          <el-input v-model="temp.title" />
+          <el-input
+            v-model="temp.title"
+            @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+            @keyup.esc.native="dialogFormVisible = false"
+          />
         </el-form-item>
 
         <el-form-item label="作者">
-          <el-input v-model="temp.author" />
+          <el-input
+            v-model="temp.author"
+            @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+            @keyup.esc.native="dialogFormVisible = false"
+          />
         </el-form-item>
 
         <el-form-item label="出版社">
-          <el-input v-model="temp.pub" />
+          <el-input
+            v-model="temp.pub"
+            @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+            @keyup.esc.native="dialogFormVisible = false"
+          />
         </el-form-item>
         <el-form-item label="类别" prop="title">
           <el-select v-model="temp.categy" class="filter-item" placeholder="Please select">
@@ -273,10 +295,20 @@
           </el-select>
         </el-form-item>
         <el-form-item label="分类号">
-          <el-input v-model="temp.clsify_num" />
+          <el-input
+            v-model="temp.clsify_num"
+            @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+            @keyup.esc.native="dialogFormVisible = false"
+          />
         </el-form-item>
         <el-form-item label="关键词">
-          <el-input v-model="temp.kw" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" />
+          <el-input
+            v-model="temp.kw"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+            @keyup.esc.native="dialogFormVisible = false"
+          />
         </el-form-item>
         <!-- <el-form-item label="总数" prop="title">
           <el-input v-model="temp.pageviews" />
@@ -309,12 +341,12 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">Confirm</el-button>
+        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">确认</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
+    <!-- <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
         <el-table-column prop="key" label="Channel" />
         <el-table-column prop="pv" label="Pv" />
@@ -322,7 +354,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
       </span>
-    </el-dialog>
+    </el-dialog>-->
   </div>
 </template>
 
@@ -384,7 +416,8 @@ export default {
         title: undefined,
         type: undefined,
         page_size: 20,
-        page: 1
+        page: 1,
+        sort: '+id'
         // sort: '+id'
       },
 
@@ -423,8 +456,24 @@ export default {
       downloadLoading: false
     }
   },
+  computed: {
+    isAdmin: function () {
+      if (this.$store.getters.roles[0] === 'administrator') {
+        return true
+      } else {
+        return false
+      }
+    },
+    isActive: function () {
+      if (this.$store.getters.roles[0] === 'inactive_user') {
+        return false
+      } else {
+        return true
+      }
+    }
+  },
   created() {
-    console.log('created() ')
+    // console.log('created() ')
 
     this.getList()
   },
@@ -435,13 +484,16 @@ export default {
   },
   methods: {
     getList() {
-      console.log('getList()')
+      // console.log('getList()')
       // this.allTitle = fetchAlltitle()
 
       this.listLoading = true
       ffetchList(this.listQuery).then(response => {
         // this.list = dataTest()
         this.list = dataTranFormer(response.data.results)
+        if (this.listQuery.sort === '-id') {
+          this.list.reverse()
+        }
         this.total = response.data.count
         // console.log(this.list)
         // this.total = response.data.total
@@ -459,24 +511,35 @@ export default {
       this.getList()
     },
     handleFilter_fuzzy() {
-      this.listQuery.page = 1
-      console.log(this.fuzzy)
-      ffetchList_fuzzy(this.fuzzy).then(response => {
-        // this.list = dataTest()
-        console.response
-        this.list = dataTranFormer(response.data.results)
-        this.total = this.list.length
-        // console.log(this.list)
-        // this.total = response.data.total
+      // this.listQuery.page = 1
+      if (this.fuzzy === '') {
+        this.handleFilter()
+      }
+      else {
+        this.resetQuery()
+        // console.log(this.fuzzy)
+        ffetchList_fuzzy(this.fuzzy).then(response => {
+          // this.list = dataTest()
+          this.list = dataTranFormer(response.data.results)
+          for (var i = 0; i < this.list.length; i++) {
+            if (JSON.stringify(this.list[i]) === '{}') {
+              this.list.splice(i, 1)
+              i = i - 1
+            }
+          }
+          this.total = this.list.length
+          // console.log(this.list)
+          // this.total = response.data.total
 
-        // Just to simulate the time of the request
-        // setTimeout(() => {
-        //   this.listLoading = false
-        // }, 1.5 * 1000)
-      })
+          // Just to simulate the time of the request
+          // setTimeout(() => {
+          //   this.listLoading = false
+          // }, 1.5 * 1000)
+        })
+      }
     },
     handleModifyStatus(row, status) {
-      console.log('handleModifyStatus()')
+      // console.log('handleModifyStatus()')
       this.$message({
         message: '操作Success',
         type: 'success'
@@ -484,23 +547,24 @@ export default {
       row.status = status
     },
     sortChange(data) {
-      console.log('sortChange(data)')
+      // console.log('sortChange(data)')
       const { prop, order } = data
       if (prop === 'id') {
         this.sortByID(order)
       }
     },
     sortByID(order) {
-      console.log('sortByID(order)')
+      // console.log('sortByID(order)')
       if (order === 'ascending') {
         this.listQuery.sort = '+id'
       } else {
         this.listQuery.sort = '-id'
+        this.list.reverse()
       }
-      this.handleFilter()
+      // this.handleFilter()
     },
     resetTemp() {
-      console.log('resetTemp()')
+      // console.log('resetTemp()')
       // this.temp = {
       //   id: undefined,
       //   remark: '',
@@ -529,8 +593,24 @@ export default {
 
       }
     },
+    resetQuery() {
+      this.listQuery = {
+        category: undefined,
+        book_id: undefined,
+        author: undefined,
+        // importance: undefined,
+        title: undefined,
+        type: undefined,
+        page_size: 20,
+        page: 1,
+        sort: '+id'
+      }
+    },
+    clear_fuzzy() {
+      this.fuzzy = ''
+    },
     handleCreate() {
-      console.log('handleCreate()')
+      // console.log('handleCreate()')
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
@@ -539,17 +619,17 @@ export default {
       })
     },
     createData() {
-      console.log('createData()')
+      // console.log('createData()')
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           // this.temp.author = 'vue-element-admin'
           createBook(this.temp).then(() => {
-            this.list.unshift(this.temp)
+            this.list.push(this.temp)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: 'Created Successfully',
+              message: '创建成功',
               type: 'success',
               duration: 2000
             })
@@ -559,6 +639,7 @@ export default {
     },
     handleUpdate(row) {
       console.log('handleUpdate(row)')
+      // console.log(row)
       this.temp = Object.assign({}, row) // copy obj
       this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
@@ -566,15 +647,16 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
+
     },
     updateData() {
-      console.log('updateData()')
+      // console.log('updateData()')
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          console.log('debug tempData')
-          console.log(tempData)
+          // console.log('debug tempData')
+          // console.log(tempData)
           updateBook(tempData).then((response) => {
             console.log(response)
             const index = this.list.findIndex(v => v.id === this.temp.id)
@@ -582,7 +664,7 @@ export default {
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: 'Update Successfully',
+              message: '更新成功',
               type: 'success',
               duration: 2000
             })
@@ -591,20 +673,49 @@ export default {
       })
     },
     handleDelete(row, index) {
-      console.log('handleDelete(row, index)')
+      this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        await this.delBook(row, index)
+        await this.getList()
+      })
+
+    },
+    // handleDelete(row, index) {
+    //   this.$confirm('此操作将永久删除该条信息, 是否继续?', '提示', {
+    //     confirmButtonText: '确定',
+    //     cancelButtonText: '取消',
+    //     type: 'warning'
+    //   }).then(async () => {
+    //     // await this.$message({
+    //     //   type: 'success',
+    //     //   message: '删除成功!'
+    //     // })
+    //     await this.deleteBook(row, index)
+    //   }).catch(() => {
+    //     this.$message({
+    //       type: 'info',
+    //       message: '已取消删除'
+    //     })
+    //   })
+    // },
+    delBook(row, index) {
+      // console.log('handleDelete(row, index)')
       this.$notify({
         title: 'Success',
-        message: 'Delete Successfully',
+        message: '删除成功',
         type: 'success',
         duration: 2000
       })
-      // this.list.splice(index, 1)
+      this.list.splice(index, 1)
       deleteBook(row)
       this.listQuery.page = 1
       self.ffetchList(this.listQuery)
     },
     handleDownload() {
-      console.log('handleDownload() ')
+      // console.log('handleDownload() ')
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
@@ -619,7 +730,7 @@ export default {
       })
     },
     formatJson(filterVal) {
-      console.log('formatJson(filterVal)')
+      // console.log('formatJson(filterVal)')
       return this.list.map(v => filterVal.map(j => {
         if (j === 'timestamp') {
           return parseTime(v[j])
@@ -629,7 +740,7 @@ export default {
       }))
     },
     getSortClass(key) {
-      console.log('getSortClass()')
+      // console.log('getSortClass()')
       // console.log(key)
       const sort = this.list.sort
       // console.log(sort)

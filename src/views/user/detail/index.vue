@@ -39,7 +39,7 @@
               <li class="list-group-item">
                 <svg-icon icon-class="sex" />
                 性别
-                <div class="pull-right">{{ this.$store.getters.sex === 'male' ? '男' : '女' }}</div>
+                <div class="pull-right">{{ this.$store.getters.sex }}</div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="username" />
@@ -343,7 +343,7 @@ export default {
       currentForm.validate(async valid => {
         if (valid) {
           this.loading = true
-          await this.$store.dispatch('user/modify', this.modifyForm)
+          await this.$store.dispatch('user/currentUserModify', this.modifyForm)
           await this.$store.dispatch('user/getInfo')
           await this.getUser()
         } else {

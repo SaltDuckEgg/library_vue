@@ -1,4 +1,4 @@
-import { login, getInfo, activate, password, modify } from '@/api/user'
+import { login, getInfo, activate, password, currentUserModify, modify, deleteUser } from '@/api/user'
 import { getToken, setToken, removeToken, getPassword, setPassword, removePassword } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { Message } from 'element-ui'
@@ -155,6 +155,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       const { newPassword } = passwordInfo
       password({ password: js_sha256.sha256(newPassword) }).then(response => {
+        setPassword(js_sha256.sha256(newPassword))
         Message({
           message: '成功修改密码！',
           type: 'success',
@@ -167,12 +168,54 @@ const actions = {
     })
   },
 
-  modify({ commit }, modifyInfo) {
+  currentUserModify({ commit }, modifyInfo) {
     return new Promise((resolve, reject) => {
       const { phone, email } = modifyInfo
-      modify({ phone: phone, email: email }).then(response => {
+      currentUserModify({ phone: phone, email: email }).then(response => {
         Message({
           message: '修改成功！',
+          type: 'success',
+          duration: 5 * 1000
+        })
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  modify({ commit }, modifyInfo) {
+    return new Promise((resolve, reject) => {
+      const { id, username, roles, name, sex, academy, class_num, phone, email, in_lib } = modifyInfo
+      modify(id,
+        {
+          username: username,
+          roles: roles,
+          name: name,
+          sex: sex,
+          academy: academy,
+          class_num: class_num,
+          phone: phone,
+          email: email,
+          in_lib: in_lib
+        }).then(response => {
+        Message({
+          message: '修改成功！',
+          type: 'success',
+          duration: 5 * 1000
+        })
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  delete({ commit }, id) {
+    return new Promise((resolve, reject) => {
+      deleteUser(id).then(response => {
+        Message({
+          message: '删除成功！',
           type: 'success',
           duration: 5 * 1000
         })

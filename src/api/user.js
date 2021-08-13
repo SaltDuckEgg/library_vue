@@ -58,7 +58,7 @@ export function password(data) {
   })
 }
 
-export function modify(data) {
+export function currentUserModify(data) {
   return request({
     url: 'http://124.71.225.17:8000/user/detail/',
     method: 'post',
@@ -66,3 +66,25 @@ export function modify(data) {
   })
 }
 
+export function fetchList(query) {
+  return request({
+    url: 'http://124.71.225.17:8000/user/',
+    method: 'get',
+    params: query
+  })
+}
+
+export function modify(id, data) {
+  return request({
+    url: 'http://124.71.225.17:8000/user/' + id + '/',
+    method: 'put',
+    data: data
+  })
+}
+
+export function deleteUser(id) {
+  return request({
+    url: 'http://124.71.225.17:8000/user/' + id + '/',
+    method: 'delete'
+  })
+}

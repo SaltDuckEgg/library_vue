@@ -15,6 +15,15 @@ const tableRouter = {
       component: () => import('@/views/user/detail'),
       name: 'Detail',
       meta: { title: '个人中心' }
+    },
+    {
+      path: 'list',
+      component: () => import('@/views/user/list'),
+      name: 'List',
+      meta: {
+        title: '用户列表',
+        roles: ['administrator']
+      }
     }
     // {
     //   path: 'drag-table',

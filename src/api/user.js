@@ -74,6 +74,13 @@ export function fetchList(query) {
   })
 }
 
+export function fetchAcademyClass() {
+  return request({
+    url: 'http://124.71.225.17:8000/user/academy/',
+    method: 'get'
+  })
+}
+
 export function modify(id, data) {
   return request({
     url: 'http://124.71.225.17:8000/user/' + id + '/',

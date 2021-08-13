@@ -67,6 +67,15 @@
         plain
         @click="getList"
       >搜索</el-button>
+      <el-button
+        v-waves
+        :loading="downloadLoading"
+        class="filter-item"
+        type="success"
+        icon="el-icon-download"
+        plain
+        @click="handleDownload"
+      >导出</el-button>
     </div>
 
     <el-table
@@ -206,6 +215,7 @@ import { fetchAcademyClass, fetchList } from '@/api/user'
 import waves from '@/directive/waves'
 import { Message } from 'element-ui'
 import Pagination from '@/components/Pagination'
+import { parseTime } from '@/utils'
 
 export default {
   name: 'List',
@@ -234,6 +244,7 @@ export default {
         'administrator': '管理员'
       },
       academy_class: [],
+      total: 0,
       list: [],
       listLoading: false,
       listQuery: {
@@ -251,7 +262,8 @@ export default {
       rules: {
         phone: [{ required: true, trigger: 'blur', validator: validatePhone }],
         email: [{ trigger: 'blur', validator: validateEmail }]
-      }
+      },
+      downloadLoading: false
     }
   },
   computed: {
@@ -336,7 +348,29 @@ export default {
         }
       })
       this.dialogFormVisible = false
-    }
+    },
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['id', 'username', 'name', 'sex', 'academy', 'class_num', 'phone', 'email', 'roles']
+        const data = this.formatJson(tHeader)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: 'user-list'
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal) {
+      return this.list.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
+    },
   }
 }
 </script>

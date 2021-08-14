@@ -1,5 +1,77 @@
 <template>
   <div class="app-container">
+    <div class="filter-container">
+      <el-input
+        v-model="listQuery.username"
+        placeholder="用户名（学号）"
+        style="width: 150px;"
+        class="filter-item"
+        @change="getList"
+        @keyup.enter.native="getList"
+      />
+      <el-input
+        v-model="listQuery.name"
+        placeholder="姓名"
+        style="width: 150px;"
+        class="filter-item"
+        @change="getList"
+        @keyup.enter.native="getList"
+      />
+      <el-select
+        v-model="listQuery.sex"
+        placeholder="性别"
+        clearable
+        style="width: 110px"
+        class="filter-item"
+        @change="getList"
+      >
+        <el-option label="男" value="男" />
+        <el-option label="女" value="女" />
+      </el-select>
+      <el-select
+        v-model="listQuery.academy"
+        placeholder="学院"
+        clearable
+        style="width: 180px"
+        class="filter-item"
+        @change="getList"
+      >
+        <el-option
+          v-for="item in academy_class"
+          :key="item.academy"
+          :label="item.academy"
+          :value="item.academy"
+        />
+      </el-select>
+      <el-select
+        v-model="listQuery.class_num"
+        placeholder="班级"
+        clearable
+        style="width: 180px"
+        class="filter-item"
+        @change="getList"
+      >
+        <el-option v-for="item in classNumOptions" :key="item" :label="item" :value="item" />
+      </el-select>
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-search"
+        plain
+        @click="getList"
+      >搜索</el-button>
+      <el-button
+        v-waves
+        :loading="downloadLoading"
+        class="filter-item"
+        type="success"
+        icon="el-icon-download"
+        plain
+        @click="handleDownload"
+      >导出</el-button>
+    </div>
+
     <el-table
       :key="userTableKey"
       v-loading="listLoading"
@@ -96,6 +168,7 @@
         label-position="left"
         label-width="80px"
         style="width: 450px; margin-left:80px;height:400px;"
+        @keyup.enter.native="modifyData()"
       >
         <el-form-item label="姓名" :label-width="formLabelWidth">
           <el-input v-model="temp.name" autocomplete="off" disabled />
@@ -122,15 +195,28 @@
         <el-button type="primary" @click="modifyData()">确认</el-button>
       </div>
     </el-dialog>
+
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      @pagination="getList"
+    />
   </div>
 </template>
 
 <script>
-import { fetchList } from '@/api/user'
+import { fetchAcademyClass, fetchList } from '@/api/user'
+import waves from '@/directive/waves'
 import { Message } from 'element-ui'
+import Pagination from '@/components/Pagination'
+import { parseTime } from '@/utils'
 
 export default {
   name: 'List',
+  components: { Pagination },
+  directives: { waves },
   data() {
     const validatePhone = (rule, value, callback) => {
       if (!(/^1[3-9]\d{9}$/.test(value))) {
@@ -153,27 +239,16 @@ export default {
         'active_user': '正式用户',
         'administrator': '管理员'
       },
+      academy_class: [],
+      total: 0,
       list: [],
-      // [
-      //   {
-      //     'id': 1,
-      //     'username': '8207181529',
-      //     'roles': 'active_user',
-      //     'name': '',
-      //     'sex': '男',
-      //     'academy': '',
-      //     'class_num': '',
-      //     'phone': '18995599425',
-      //     'email': '642434945@qq.com',
-      //     'avatar': 'http://124.71.225.17:8000/media/avatar/default.png'
-      //   }
-      //   ]
       listLoading: false,
       listQuery: {
         academy: '',
         class_num: '',
         username: '',
         name: '',
+        sex: '',
         page: 1,
         page_size: 20
       },
@@ -183,22 +258,46 @@ export default {
       rules: {
         phone: [{ required: true, trigger: 'blur', validator: validatePhone }],
         email: [{ trigger: 'blur', validator: validateEmail }]
+      },
+      downloadLoading: false
+    }
+  },
+  computed: {
+    classNumOptions: function () {
+      if (this.listQuery.academy !== '') {
+        return this.academy_class.filter(v => v.academy === this.listQuery.academy)[0].class_num // 返回选中学院包含的班级
+      } else {
+        const classes = []
+        this.academy_class.forEach(v => classes.push(v.class_num))
+        return classes.flat() // 返回包含所有班级的数组
       }
     }
   },
   created() {
     this.getList()
+    this.getAcademyClass()
   },
   methods: {
     getList() {
+      console.log('listQuery', this.listQuery)
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        // console.log('返回的用户数据结果：', response.data.results)
         this.list = response.data.results
         this.total = response.data.count
         setTimeout(() => {
           this.listLoading = false
-        }, 1000)
+        }, 0.5 * 1000)
+      })
+    },
+    getAcademyClass() {
+      this.listLoading = true
+      fetchAcademyClass().then(response => {
+        console.log('返回的学院班级结果：', response.data.academy_info)
+        response.data.academy_info.forEach(v => console.log(v))
+        this.academy_class = response.data.academy_info
+        setTimeout(() => {
+          this.listLoading = false
+        }, 0.5 * 1000)
       })
     },
     handleModify(row) {
@@ -245,7 +344,29 @@ export default {
         }
       })
       this.dialogFormVisible = false
-    }
+    },
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['id', 'username', 'name', 'sex', 'academy', 'class_num', 'phone', 'email', 'roles']
+        const data = this.formatJson(tHeader)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: 'user-list'
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal) {
+      return this.list.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
+    },
   }
 }
 </script>

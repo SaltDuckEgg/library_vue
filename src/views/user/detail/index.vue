@@ -133,7 +133,7 @@
       <!--        </div>-->
       <!--      </el-dialog>-->
       <el-dialog title="填写用户信息" :visible.sync="activationFormVisible">
-        <el-form ref="activationForm" :model="activationForm" :rules="activationRules" class="login-form">
+        <el-form ref="activationForm" :model="activationForm" :rules="activationRules" class="login-form" @keyup.enter.native="activationSubmit">
           <el-form-item label="手机号码" :label-width="formLabelWidth" prop="phone">
             <el-input v-model="activationForm.phone" autocomplete="off" />
           </el-form-item>
@@ -147,7 +147,7 @@
         </div>
       </el-dialog>
       <el-dialog title="修改密码" :visible.sync="passwordFormVisible">
-        <el-form ref="passwordForm" :model="passwordForm" :rules="passwordRules">
+        <el-form ref="passwordForm" :model="passwordForm" :rules="passwordRules" @keyup.enter.native="passwordSubmit">
           <el-form-item label="旧密码" :label-width="formLabelWidth" prop="oldPassword">
             <el-input v-model="passwordForm.oldPassword" autocomplete="off" show-password />
           </el-form-item>
@@ -163,7 +163,7 @@
           <el-button type="primary" :loading="loading" @click="passwordSubmit">确 定</el-button>
         </div>
       </el-dialog>
-      <el-dialog title="修改手机号码" :visible.sync="phoneFormVisible">
+      <el-dialog title="修改手机号码" :visible.sync="phoneFormVisible" @keyup.enter.native="modifySubmit(modifyForm.phone, '')">
         <el-form ref="phoneForm" :model="modifyForm" :rules="phoneRules">
           <el-form-item label="手机号码" :label-width="formLabelWidth" prop="phone">
             <el-input v-model="modifyForm.phone" autocomplete="off" />
@@ -175,7 +175,7 @@
         </div>
       </el-dialog>
       <el-dialog title="修改邮箱" :visible.sync="emailFormVisible">
-        <el-form ref="emailForm" :model="modifyForm" :rules="emailRules">
+        <el-form ref="emailForm" :model="modifyForm" :rules="emailRules" @keyup.enter.native="modifySubmit('', modifyForm.email)">
           <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
             <el-input v-model="modifyForm.email" autocomplete="off" />
           </el-form-item>

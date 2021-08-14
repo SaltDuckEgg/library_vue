@@ -8,8 +8,6 @@
   </div>
 </template>
 
-
-
 <script>
 const echarts = require('echarts/lib/echarts')
 require('echarts/lib/chart/gauge')
@@ -158,8 +156,6 @@ export default {
   }
 }
 </script>
-
-
 
 <style>
 </style>

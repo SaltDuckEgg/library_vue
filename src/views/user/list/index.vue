@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-
     <el-table
       :key="userTableKey"
       v-loading="listLoading"
@@ -58,12 +57,15 @@
       </el-table-column>
       <el-table-column label="状态" class-name="status-col" width="100">
         <template slot-scope="{row}">
-          <el-tag :type=" row.in_lib ? 'success' : 'danger' ">
-            {{ row.in_lib ? '在馆' : '离馆' }}
-          </el-tag>
+          <el-tag :type=" row.in_lib ? 'success' : 'danger' ">{{ row.in_lib ? '在馆' : '离馆' }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="150px" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        width="150px"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="{row,$index}">
           <el-button
             v-if="row.roles!=='administrator'"
@@ -120,7 +122,6 @@
         <el-button type="primary" @click="modifyData()">确认</el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
@@ -218,7 +219,7 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(async() => {
+        }).then(async () => {
           await this.$store.dispatch('user/delete', row.id)
           await this.getList()
         }).catch(() => {
@@ -230,7 +231,7 @@ export default {
       }
     },
     modifyData() {
-      this.$refs['dataForm'].validate(async(valid) => {
+      this.$refs['dataForm'].validate(async (valid) => {
         if (valid) {
           await this.$store.dispatch('user/modify', this.temp)
           await this.getList()
@@ -250,5 +251,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

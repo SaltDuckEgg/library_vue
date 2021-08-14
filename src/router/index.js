@@ -41,6 +41,18 @@ import nestedRouter from './modules/nested'
  */
 export const constantRoutes = [
   {
+    path: '/mainScreen',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/mainScreen/index'),
+        name: 'Book',
+        meta: { title: 'mainScreen', icon: 'mainScreen', noCache: true }
+      }
+    ]
+  },
+  {
     path: '/book',
     component: Layout,
     children: [

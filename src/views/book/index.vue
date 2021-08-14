@@ -27,13 +27,12 @@
       />-->
       <el-input
         v-model="fuzzy"
-        class="filter-item"
         placeholder="搜索"
         style="width: 200px;"
+        class="filter-item"
         @input="handleFilter_fuzzy"
         @change="handleFilter_fuzzy"
       />
-
       <el-select
         v-model="listQuery.category"
         placeholder="类别"
@@ -363,8 +362,7 @@ import { ffetchList, dataTranFormer, dataTest, ffetchList_fuzzy, updateBook, del
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 // import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-
-import Pagination from '@/views/book/Pagination' // secondary package based on el-pagination
+import Pagination from '@/views/book/components/Pagination' // secondary package based on el-pagination
 
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },
@@ -678,7 +676,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async () => {
-        await this.delBook(row, index)
+        await this.deleteBook(row, index)
         await this.getList()
       })
 

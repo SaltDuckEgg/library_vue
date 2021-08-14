@@ -6,7 +6,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || process.env.VUE_APP_TITLE || '中南大学图书馆管理系统登陆' // 标题
+const name = defaultSettings.title || process.env.VUE_APP_TITLE || '中南大学图书馆管理系统登录' // 标题
 // const port = process.env.port || process.env.npm_config_port || 9875 // 端口
 
 // vue.config.js 配置说明

@@ -96,7 +96,7 @@ const actions = {
         const { name, sex, username, phone, email, academy, class_num, avatar, roles } = response.data
 
         if (!username) {
-          reject('认证失败，请重新登陆！')
+          reject('认证失败，请重新登录！')
         }
 
         console.log('头像:', avatar)

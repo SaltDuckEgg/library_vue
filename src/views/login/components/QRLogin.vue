@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-property-decorator'
+import { Vue, Watch } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 import { codeQuery, refreshCode } from '@/api/qrLogger'
 import QRCode from 'qrcode'
@@ -40,6 +40,8 @@ export default class QRLogin extends Vue {
   updated = 0
   qr = ''
   uid = ''
+  redirect = null
+  otherQuery = {}
 
   async refresh() {
     this.qr = ''
@@ -48,6 +50,15 @@ export default class QRLogin extends Vue {
     this.updated = Date.now()
     this.intv = setInterval(() => this.loop(), 1000)
     this.loop()
+  }
+
+  @Watch('$route')
+  bar(route) {
+    const query = route.query
+    if (query) {
+      this.redirect = query.redirect
+      this.otherQuery = this.getOtherQuery(query)
+    }
   }
 
   expired = false
@@ -64,7 +75,7 @@ export default class QRLogin extends Vue {
     this.scanned = query.scanned
     this.token = query.token
     if (query.token) {
-      this.$store.dispatch('user/loginViaToken', this.loginViaToken)
+      this.$store.dispatch('user/loginViaToken', this.token)
         .then(() => {
           this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
         })
@@ -81,6 +92,15 @@ export default class QRLogin extends Vue {
 
   beforeDestroy() {
     clearInterval(this.intv)
+  }
+
+  getOtherQuery(query) {
+    return Object.keys(query).reduce((acc, cur) => {
+      if (cur !== 'redirect') {
+        acc[cur] = query[cur]
+      }
+      return acc
+    }, {})
   }
 }
 </script>

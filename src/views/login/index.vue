@@ -10,7 +10,7 @@
         label-position="left"
       >
         <div class="title-container">
-          <h3 class="title">中南大学图书馆管理系统登陆</h3>
+          <h3 class="title">中南大学图书馆管理系统登录</h3>
         </div>
 
         <el-form-item prop="username">
@@ -57,7 +57,7 @@
           type="primary"
           style="width:100%;margin-bottom:30px;"
           @click.native.prevent="handleLogin"
-        >登陆
+        >登录
         </el-button>
 
         <div style="position:relative">
@@ -70,9 +70,9 @@
           <!--          <span>Password : any</span>-->
           <!--        </div>-->
 
-          <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-            第三方登陆
-          </el-button>
+          <!--          <el-button class="thirdparty-button" type="primary" @click="showDialog=true">-->
+          <!--            第三方登录-->
+          <!--          </el-button>-->
         </div>
       </el-form>
       <div style="height: 50%;border-right: #ffffff55 solid 1px;margin: 0 5em;" />

@@ -72,6 +72,11 @@ const actions = {
     })
   },
 
+  loginViaToken({ commit }, token) {
+    commit('SET_TOKEN', token)
+    setToken(token)
+  },
+
   tmpTest({ commit }) {
     console.log('tmpTesting...')
     commit('SET_TOKEN', 'hello')

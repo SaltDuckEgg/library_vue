@@ -28,7 +28,17 @@
           </div>
           <div>
             <div class="text-center">
-              <userAvatar :user="user" />
+              <el-upload
+                class="avatar-uploader"
+                action="http://124.71.225.17:8000/user/avatar/"
+                :http-request="upLoad"
+                :headers="headers"
+                :show-file-list="false"
+                :before-upload="beforeAvatarUpload"
+              >
+                <img v-if="imageUrl" :src="imageUrl" class="avatar" alt="">
+                <i v-else class="el-icon-plus avatar-uploader-icon" />
+              </el-upload>
             </div>
             <ul class="list-group list-group-striped">
               <li class="list-group-item">
@@ -147,13 +157,13 @@
 </template>
 
 <script>
-import userAvatar from './userAvatar'
 import { Message } from 'element-ui'
+import { getToken } from '@/utils/auth'
+import { uploadAvatar } from '@/api/user'
 // import js_sha256 from 'js-sha256'
 
 export default {
   name: 'Detail',
-  components: { userAvatar },
   data() {
     const validatePhone = (rule, value, callback) => {
       if (!(/^1[3-9]\d{9}$/.test(value))) {
@@ -196,6 +206,10 @@ export default {
         'inactive_user': '未激活用户',
         'active_user': '正式用户',
         'administrator': '管理员'
+      },
+      imageUrl: this.$store.getters.avatar,
+      headers: {
+        'Authorization': 'JWT ' + getToken()
       },
       activationFormVisible: false,
       passwordFormVisible: false,
@@ -315,12 +329,66 @@ export default {
       this.loading = false
       this.emailFormVisible = false
       this.phoneFormVisible = false
+    },
+    beforeAvatarUpload(file) {
+      if (file.type.indexOf('image/') === -1) {
+        Message({
+          message: '文件格式错误，请上传图片类型,如：JPG，PNG后缀的文件！',
+          type: 'error',
+          duration: 5 * 1000
+        })
+      } else {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => {
+          this.options.img = reader.result
+        }
+      }
+    },
+    upLoad(file) {
+      const formData = new FormData()
+      formData.append('avatar', file.file)
+      console.log(file)
+      uploadAvatar(formData).then(res => {
+        console.log(res)
+        this.imageUrl = res.data.avatar
+        Message({
+          message: '头像上传成功！',
+          type: 'success',
+          duration: 5 * 1000
+        })
+        this.$store.dispatch('user/modifyAvatar', res.data.avatar)
+      })
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 
 $bg:#2d3a4b;
 $dark_gray:#889aa4;

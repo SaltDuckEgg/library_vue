@@ -204,6 +204,10 @@ const actions = {
     })
   },
 
+  modifyAvatar({ commit }, avatar) {
+    commit('SET_AVATAR', avatar)
+  },
+
   delete({ commit }, id) {
     return new Promise((resolve, reject) => {
       deleteUser(id).then(response => {

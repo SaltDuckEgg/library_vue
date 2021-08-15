@@ -263,7 +263,7 @@ export default {
     }
   },
   computed: {
-    classNumOptions: function () {
+    classNumOptions: function() {
       if (this.listQuery.academy !== '') {
         return this.academy_class.filter(v => v.academy === this.listQuery.academy)[0].class_num // 返回选中学院包含的班级
       } else {
@@ -288,6 +288,16 @@ export default {
           this.listLoading = false
         }, 0.5 * 1000)
       })
+        .catch(error => {
+          console.log(error)
+          Message({
+            message: '请确认搜索信息和页码正确！',
+            type: 'warning',
+            duration: 5 * 1000
+          })
+          this.listQuery.page = 1
+          this.getList()
+        })
     },
     getAcademyClass() {
       this.listLoading = true
@@ -318,7 +328,7 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(async () => {
+        }).then(async() => {
           await this.$store.dispatch('user/delete', row.id)
           await this.getList()
         }).catch(() => {
@@ -330,7 +340,7 @@ export default {
       }
     },
     modifyData() {
-      this.$refs['dataForm'].validate(async (valid) => {
+      this.$refs['dataForm'].validate(async(valid) => {
         if (valid) {
           await this.$store.dispatch('user/modify', this.temp)
           await this.getList()
@@ -366,7 +376,7 @@ export default {
           return v[j]
         }
       }))
-    },
+    }
   }
 }
 </script>

@@ -77,18 +77,6 @@ const actions = {
     setToken(token)
   },
 
-  tmpTest({ commit }) {
-    console.log('tmpTesting...')
-    commit('SET_TOKEN', 'hello')
-    commit('SET_ROLES', ['administrator'])
-    setToken('hello')
-    setPassword(js_sha256.sha256('hello'))
-  },
-
-  tmpGetInfo({ commit, state }) {
-    return { roles: ['administrator'] }
-  },
-
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {

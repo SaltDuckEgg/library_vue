@@ -60,20 +60,7 @@
         >登录
         </el-button>
 
-        <div style="position:relative">
-          <!--        <div class="tips">-->
-          <!--          <span>默认账号 : 学号</span>-->
-          <!--          <span>初始密码 : 学号</span>-->
-          <!--        </div>-->
-          <!--        <div class="tips">-->
-          <!--          <span style="margin-right:18px;">Username : editor</span>-->
-          <!--          <span>Password : any</span>-->
-          <!--        </div>-->
-
-          <!--          <el-button class="thirdparty-button" type="primary" @click="showDialog=true">-->
-          <!--            第三方登录-->
-          <!--          </el-button>-->
-        </div>
+        <div style="position:relative" />
       </el-form>
       <div style="height: 50%;border-right: #ffffff55 solid 1px;margin: 0 5em;" />
       <QRLogin />
@@ -114,8 +101,8 @@ export default {
     }
     return {
       loginForm: {
-        username: '8207181529',
-        password: '8207181529'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -173,8 +160,6 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          // const origin_password = this.loginForm.password
-          // this.loginForm.password = js_sha256.sha256(this.loginForm.password)
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
@@ -183,7 +168,6 @@ export default {
             .catch(() => {
               this.loading = false
             })
-          // this.loginForm.password = origin_password
         } else {
           console.log('error submit!!')
           return false
@@ -198,24 +182,6 @@ export default {
         return acc
       }, {})
     }
-    // afterQRScan() {
-    //   if (e.key === 'x-admin-oauth-code') {
-    //     const code = getQueryObject(e.newValue)
-    //     const codeMap = {
-    //       wechat: 'code',
-    //       tencent: 'code'
-    //     }
-    //     const type = codeMap[this.auth_type]
-    //     const codeName = code[type]
-    //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-    //         this.$router.push({ path: this.redirect || '/' })
-    //       })
-    //     } else {
-    //       alert('第三方登录失败')
-    //     }
-    //   }
-    // }
   }
 }
 </script>
@@ -280,7 +246,7 @@ $light_gray: #eee;
 
   .login-form {
     position: relative;
-    width: 520px;
+    width: 400px;
     max-width: 100%;
     overflow: hidden;
   }

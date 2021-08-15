@@ -89,49 +89,6 @@
           </div>
         </el-card>
       </el-col>
-      <!--      <el-col :span="18" :xs="24">-->
-      <!--        <el-card>-->
-      <!--          <div slot="header" class="clearfix">-->
-      <!--            <span>基本资料</span>-->
-      <!--          </div>-->
-      <!--          <el-tabs v-model="activeTab">-->
-      <!--            <el-tab-pane label="基本资料" name="userinfo">-->
-      <!--              <userInfo :user="user"/>-->
-      <!--            </el-tab-pane>-->
-      <!--            <el-tab-pane label="修改密码" name="resetPwd">-->
-      <!--              <resetPwd :user="user"/>-->
-      <!--            </el-tab-pane>-->
-      <!--          </el-tabs>-->
-      <!--        </el-card>-->
-      <!--      </el-col>-->
-
-      <!--      <el-dialog title="填写用户信息" :visible.sync="dialogFormVisible">-->
-      <!--        <el-form :model="form" :rules="rules">-->
-      <!--          <el-form-item label="姓名" :label-width="formLabelWidth">-->
-      <!--            <el-input v-model="form.name" autocomplete="off" />-->
-      <!--          </el-form-item>-->
-      <!--          <el-form-item label="性别" :label-width="formLabelWidth">-->
-      <!--            <el-radio v-model="form.sex" label="male">男</el-radio>-->
-      <!--            <el-radio v-model="form.sex" label="female">女</el-radio>-->
-      <!--          </el-form-item>-->
-      <!--          <el-form-item label="手机号码" :label-width="formLabelWidth">-->
-      <!--            <el-input v-model="form.phone" autocomplete="off" />-->
-      <!--          </el-form-item>-->
-      <!--          <el-form-item label="邮箱" :label-width="formLabelWidth">-->
-      <!--            <el-input v-model="form.email" autocomplete="off" />-->
-      <!--          </el-form-item>-->
-      <!--          <el-form-item label="学院" :label-width="formLabelWidth">-->
-      <!--            <el-input v-model="form.academy" autocomplete="off" />-->
-      <!--          </el-form-item>-->
-      <!--          <el-form-item label="班级" :label-width="formLabelWidth">-->
-      <!--            <el-input v-model="form.class_num" autocomplete="off" />-->
-      <!--          </el-form-item>-->
-      <!--        </el-form>-->
-      <!--        <div slot="footer" class="dialog-footer">-->
-      <!--          <el-button @click="dialogFormVisible = false">取 消</el-button>-->
-      <!--          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>-->
-      <!--        </div>-->
-      <!--      </el-dialog>-->
       <el-dialog title="填写用户信息" :visible.sync="activationFormVisible">
         <el-form ref="activationForm" :model="activationForm" :rules="activationRules" class="login-form" @keyup.enter.native="activationSubmit">
           <el-form-item label="手机号码" :label-width="formLabelWidth" prop="phone">
@@ -148,9 +105,9 @@
       </el-dialog>
       <el-dialog title="修改密码" :visible.sync="passwordFormVisible">
         <el-form ref="passwordForm" :model="passwordForm" :rules="passwordRules" @keyup.enter.native="passwordSubmit">
-          <el-form-item label="旧密码" :label-width="formLabelWidth" prop="oldPassword">
-            <el-input v-model="passwordForm.oldPassword" autocomplete="off" show-password />
-          </el-form-item>
+          <!--          <el-form-item label="旧密码" :label-width="formLabelWidth" prop="oldPassword">-->
+          <!--            <el-input v-model="passwordForm.oldPassword" autocomplete="off" show-password />-->
+          <!--          </el-form-item>-->
           <el-form-item label="新密码" :label-width="formLabelWidth" prop="newPassword">
             <el-input v-model="passwordForm.newPassword" autocomplete="off" show-password />
           </el-form-item>
@@ -192,7 +149,7 @@
 <script>
 import userAvatar from './userAvatar'
 import { Message } from 'element-ui'
-import js_sha256 from 'js-sha256'
+// import js_sha256 from 'js-sha256'
 
 export default {
   name: 'Detail',
@@ -212,13 +169,13 @@ export default {
         callback()
       }
     }
-    const validateOldPassword = (rule, value, callback) => {
-      if (js_sha256.sha256(value) !== this.$store.getters.password) {
-        callback(new Error('旧密码错误'))
-      } else {
-        callback()
-      }
-    }
+    // const validateOldPassword = (rule, value, callback) => {
+    //   if (js_sha256.sha256(value) !== this.$store.getters.password) {
+    //     callback(new Error('旧密码错误'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     const validateNewPassword = (rule, value, callback) => {
       if (!(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value))) {
         callback(new Error('长度至少为6位，且需包含数字和字母'))
@@ -268,7 +225,7 @@ export default {
         email: [{ trigger: 'blur', validator: validateEmail }]
       },
       passwordRules: {
-        oldPassword: [{ required: true, trigger: 'blur', validator: validateOldPassword }],
+        // oldPassword: [{ required: true, trigger: 'blur', validator: validateOldPassword }],
         newPassword: [{ required: true, trigger: 'blur', validator: validateNewPassword }],
         repeatPassword: [{ required: true, trigger: 'blur', validator: validateRepeatPassword }]
       },

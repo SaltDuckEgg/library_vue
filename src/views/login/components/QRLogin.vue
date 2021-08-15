@@ -15,7 +15,7 @@
         <div v-if="scanned" class="qr-overlay">
           <div>
             <i class="el-icon-success" style="color: green" />
-            请在客户端登录
+            请在客户端点击确定
           </div>
         </div>
         <div v-if="expired" class="qr-overlay">
@@ -29,78 +29,78 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Vue, Watch } from 'vue-property-decorator'
-import Component from 'vue-class-component'
+<script>
 import { codeQuery, refreshCode } from '@/api/qrLogger'
 import QRCode from 'qrcode'
 
-@Component({})
-export default class QRLogin extends Vue {
-  updated = 0
-  qr = ''
-  uid = ''
-  redirect = null
-  otherQuery = {}
-
-  async refresh() {
-    this.qr = ''
-    this.uid = await refreshCode()
-    this.qr = await QRCode.toDataURL(this.uid)
-    this.updated = Date.now()
-    this.intv = setInterval(() => this.loop(), 1000)
-    this.loop()
-  }
-
-  @Watch('$route')
-  bar(route) {
-    const query = route.query
-    if (query) {
-      this.redirect = query.redirect
-      this.otherQuery = this.getOtherQuery(query)
+export default {
+  data() {
+    return {
+      updated: 0,
+      qr: '',
+      uid: '',
+      redirect: null,
+      otherQuery: {},
+      expired: false,
+      scanned: false,
+      token: '',
+      intv: 0
     }
-  }
-
-  expired = false
-  scanned = false
-  token = ''
-
-  async loop() {
-    const query = await codeQuery(this.uid)
-    this.expired = query.expired
-    if (this.expired) {
-      clearInterval(this.intv)
-      this.intv = 0
+  },
+  watch: {
+    $route: {
+      handler(route) {
+        const query = route.query
+        if (query) {
+          this.redirect = query.redirect
+          this.otherQuery = this.getOtherQuery(query)
+        }
+      }
     }
-    this.scanned = query.scanned
-    this.token = query.token
-    if (query.token) {
-      this.$store.dispatch('user/loginViaToken', this.token)
-        .then(() => {
-          this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-        })
-        .catch(() => {
-        })
-    }
-  }
-
-  intv = 0 as any
-
+  },
   mounted() {
     this.refresh()
-  }
-
+  },
   beforeDestroy() {
     clearInterval(this.intv)
-  }
+  },
+  methods: {
+    async refresh() {
+      this.qr = ''
+      this.uid = await refreshCode()
+      this.qr = await QRCode.toDataURL(this.uid)
+      this.updated = Date.now()
+      this.intv = setInterval(() => this.loop(), 1000)
+      this.loop()
+    },
 
-  getOtherQuery(query) {
-    return Object.keys(query).reduce((acc, cur) => {
-      if (cur !== 'redirect') {
-        acc[cur] = query[cur]
+    async loop() {
+      const query = await codeQuery(this.uid)
+      this.expired = query.expired
+      if (this.expired) {
+        clearInterval(this.intv)
+        this.intv = 0
       }
-      return acc
-    }, {})
+      this.scanned = query.scanned
+      this.token = query.token
+      if (query.token) {
+        this.$store.dispatch('user/loginViaToken', this.token)
+          .then(() => {
+            this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+          })
+          .catch(() => {
+          })
+      }
+    },
+
+    getOtherQuery(query) {
+      return Object.keys(query).reduce((acc, cur) => {
+        if (cur !== 'redirect') {
+          acc[cur] = query[cur]
+        }
+        return acc
+      }, {})
+    }
   }
 }
 </script>

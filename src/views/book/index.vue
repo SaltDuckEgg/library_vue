@@ -261,87 +261,129 @@
         ref="dataForm"
         :rules="rules"
         :model="temp"
+        size="mini"
         label-position="left"
         label-width="80px"
-        style="width: 450px; margin-left:80px;height:1000px;"
+        style="width: 1000px; margin-left:80px;height:900px;"
       >
-        <el-form-item label="书名" prop="title">
-          <el-input
-            v-model="temp.title"
-            @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
-            @keyup.esc.native="dialogFormVisible = false"
-          />
-        </el-form-item>
+        <el-row>
+          <el-col :span="13">
+            <el-row>
+              <el-col :span="12">
+                <img height="250px" width="250px" :src="pic_baseUrl+temp.title+'.jpg'" />
+              </el-col>
+              <el-col :span="12">
+                <el-row>
+                  <el-form-item label="书名" prop="title">
+                    <el-input
+                      v-model="temp.title"
+                      :disabled="!isActive"
+                      @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+                      @keyup.esc.native="dialogFormVisible = false"
+                    />
+                  </el-form-item>
+                </el-row>
+                <el-row>
+                  <el-form-item label="作者">
+                    <el-input
+                      v-model="temp.author"
+                      :disabled="!isActive"
+                      @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+                      @keyup.esc.native="dialogFormVisible = false"
+                    />
+                  </el-form-item>
+                </el-row>
 
-        <el-form-item label="作者">
-          <el-input
-            v-model="temp.author"
-            @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
-            @keyup.esc.native="dialogFormVisible = false"
-          />
-        </el-form-item>
+                <el-row>
+                  <el-form-item label="出版社">
+                    <el-input
+                      v-model="temp.pub"
+                      :disabled="!isActive"
+                      @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+                      @keyup.esc.native="dialogFormVisible = false"
+                    />
+                  </el-form-item>
+                </el-row>
 
-        <el-form-item label="出版社">
-          <el-input
-            v-model="temp.pub"
-            @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
-            @keyup.esc.native="dialogFormVisible = false"
-          />
-        </el-form-item>
-        <el-form-item label="类别" prop="title">
-          <el-select v-model="temp.categy" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in categyOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="分类号">
-          <el-input
-            v-model="temp.clsify_num"
-            @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
-            @keyup.esc.native="dialogFormVisible = false"
-          />
-        </el-form-item>
-        <el-form-item label="关键词">
-          <el-input
-            v-model="temp.kw"
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
-            @keyup.esc.native="dialogFormVisible = false"
-          />
-        </el-form-item>
-        <!-- <el-form-item label="总数" prop="title">
-          <el-input v-model="temp.pageviews" />
-        </el-form-item>-->
-        <!-- <el-form-item label="库存" prop="title"> -->
-        <!-- <el-input v-model="temp.total_pageviews" />
-        </el-form-item>-->
+                <el-row>
+                  <el-form-item label="类别" prop="title">
+                    <el-select
+                      v-model="temp.categy"
+                      :disabled="!isActive"
+                      class="filter-item"
+                      placeholder="Please select"
+                    >
+                      <el-option
+                        v-for="item in categyOptions"
+                        :key="item"
+                        :label="item"
+                        :value="item"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-row>
+              </el-col>
+            </el-row>
 
-        <!-- <el-form-item label="Date" prop="timestamp">
-          <el-date-picker
-            v-model="temp.timestamp"
-            type="datetime"
-            placeholder="Please pick a date"
-          />
-        </el-form-item>-->
+            <el-row>
+              <el-form-item label="分类号">
+                <el-input
+                  v-model="temp.clsify_num"
+                  :disabled="!isActive"
+                  @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+                  @keyup.esc.native="dialogFormVisible = false"
+                />
+              </el-form-item>
+            </el-row>
 
-        <!-- <el-form-item label="Status">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>-->
+            <el-row>
+              <el-form-item label="关键词">
+                <el-input
+                  v-model="temp.kw"
+                  :disabled="!isActive"
+                  type="textarea"
+                  :autosize="{ minRows: 2, maxRows: 4}"
+                  @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+                  @keyup.esc.native="dialogFormVisible = false"
+                />
+              </el-form-item>
+            </el-row>
 
-        <el-form-item label="简介">
-          <el-input
-            v-model="temp.summary"
-            :autosize="{ minRows: 3, maxRows: 20}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
+            <el-row :gutter="50">
+              <el-col :span="10">
+                <el-form-item label="总数" prop="title">
+                  <el-input v-model="temp.pageviews" :disabled="!isActive" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="10">
+                <el-form-item label="库存" prop="title">
+                  <el-input v-model="temp.total_pageviews" :disabled="!isActive" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-row>
+              <el-form-item label="简介">
+                <el-input
+                  v-model="temp.summary"
+                  :disabled="!isActive"
+                  :autosize="{ minRows: 3, maxRows: 15}"
+                  type="textarea"
+                  placeholder="Please input"
+                />
+              </el-form-item>
+            </el-row>
+          </el-col>
+        </el-row>
       </el-form>
+
       <div slot="footer" class="dialog-footer">
+        <el-button
+          v-if="isAdmin"
+          type="primary"
+          @click="dialogStatus==='create'?createData():updateData()"
+        >确认</el-button>
         <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">确认</el-button>
       </div>
     </el-dialog>
 
@@ -398,6 +440,7 @@ export default {
   },
   data() {
     return {
+      pic_baseUrl: 'http://124.71.225.17:8000/media/cover/',
       restaurants: [{ 'value': '三全鲜食（北新泾店）' }, { 'value': '长宁区新渔路144号' }],
       // restaurants: this.a(),
 
@@ -512,8 +555,7 @@ export default {
       // this.listQuery.page = 1
       if (this.fuzzy === '') {
         this.handleFilter()
-      }
-      else {
+      } else {
         this.resetQuery()
         // console.log(this.fuzzy)
         ffetchList_fuzzy(this.fuzzy).then(response => {
@@ -645,7 +687,6 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
-
     },
     updateData() {
       // console.log('updateData()')
@@ -679,7 +720,6 @@ export default {
         await this.deleteBook(row, index)
         await this.getList()
       })
-
     },
     // handleDelete(row, index) {
     //   this.$confirm('此操作将永久删除该条信息, 是否继续?', '提示', {
@@ -769,14 +809,31 @@ export default {
 <style lang="scss" scoped>
 .input {
   width: "100px";
-  // display: inline-block;
-  // font-size: 14px;
-  // line-height: 50px;
-  // margin-left: 8px;
-
-  // .no-redirect {
-  //   color: #97a8be;
-  //   cursor: text;
-  // }
+}
+.el-row {
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+.el-col {
+  border-radius: 4px;
+}
+.bg-purple-dark {
+  background: #99a9bf;
+}
+.bg-purple {
+  background: #d3dce6;
+}
+.bg-purple-light {
+  background: #e5e9f2;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
 }
 </style>

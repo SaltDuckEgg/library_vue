@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>通过组件的方式引入Echarts柱状图</h1>
+    <h1>温度表</h1>
     <!-- <p>{{ msg }}</p> -->
     <div class="bar_compon">
       <div :id="id" style="min-width:400px;min-height: 400px;" />
@@ -46,17 +46,17 @@ export default {
         series: [{
           type: 'gauge',
           center: ['50%', '60%'],
-          startAngle: 200,
-          endAngle: -20,
+          startAngle: 170,
+          endAngle: 10,
           min: 0,
-          max: 60,
-          splitNumber: 12,
+          max: 40,
+          splitNumber: 10,
           itemStyle: {
-            color: '#FFAB91'
+            color: '#3FABA0'
           },
           progress: {
             show: true,
-            width: 30
+            width: 40
           },
 
           pointer: {
@@ -69,7 +69,7 @@ export default {
           },
           axisTick: {
             distance: -45,
-            splitNumber: 5,
+            splitNumber: 4,
             lineStyle: {
               width: 2,
               color: '#999'
@@ -107,19 +107,19 @@ export default {
             color: 'auto'
           },
           data: [{
-            value: 20
+            value: 32
           }]
         },
 
         {
           type: 'gauge',
           center: ['50%', '60%'],
-          startAngle: 200,
-          endAngle: -20,
+          startAngle: 150,
+          endAngle: 30,
           min: 0,
-          max: 60,
+          max: 40,
           itemStyle: {
-            color: '#FD7347'
+            color: '#FDA347'
           },
           progress: {
             show: true,
@@ -145,7 +145,7 @@ export default {
             show: false
           },
           data: [{
-            value: 20
+            value: 32
           }]
 
         }

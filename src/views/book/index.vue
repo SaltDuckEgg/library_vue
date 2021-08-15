@@ -261,16 +261,17 @@
         ref="dataForm"
         :rules="rules"
         :model="temp"
-        size="mini"
         label-position="left"
         label-width="80px"
         style="width: 1000px; margin-left:80px;height:900px;"
       >
-        <el-row>
+        <!-- size="mini" -->
+
+        <el-row :gutter="20">
           <el-col :span="13">
             <el-row>
               <el-col :span="12">
-                <img height="250px" width="250px" :src="pic_baseUrl+temp.title+'.jpg'" />
+                <img height="200px" width="200px" :src="pic_baseUrl+temp.title+'.jpg'" />
               </el-col>
               <el-col :span="12">
                 <el-row>
@@ -293,39 +294,20 @@
                     />
                   </el-form-item>
                 </el-row>
-
                 <el-row>
-                  <el-form-item label="出版社">
+                  <el-form-item label="分类号">
                     <el-input
-                      v-model="temp.pub"
+                      v-model="temp.clsify_num"
                       :disabled="!isActive"
                       @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
                       @keyup.esc.native="dialogFormVisible = false"
                     />
                   </el-form-item>
                 </el-row>
-
-                <el-row>
-                  <el-form-item label="类别" prop="title">
-                    <el-select
-                      v-model="temp.categy"
-                      :disabled="!isActive"
-                      class="filter-item"
-                      placeholder="Please select"
-                    >
-                      <el-option
-                        v-for="item in categyOptions"
-                        :key="item"
-                        :label="item"
-                        :value="item"
-                      />
-                    </el-select>
-                  </el-form-item>
-                </el-row>
               </el-col>
             </el-row>
 
-            <el-row>
+            <!-- <el-row>
               <el-form-item label="分类号">
                 <el-input
                   v-model="temp.clsify_num"
@@ -334,45 +316,77 @@
                   @keyup.esc.native="dialogFormVisible = false"
                 />
               </el-form-item>
+            </el-row>-->
+          </el-col>
+          <el-col :span="7">
+            <el-row>
+              <el-form-item label="类别" prop="title">
+                <el-select
+                  v-model="temp.categy"
+                  :disabled="!isActive"
+                  class="filter-item"
+                  placeholder="Please select"
+                >
+                  <el-option v-for="item in categyOptions" :key="item" :label="item" :value="item" />
+                </el-select>
+              </el-form-item>
             </el-row>
 
             <el-row>
-              <el-form-item label="关键词">
+              <el-form-item label="出版社">
                 <el-input
-                  v-model="temp.kw"
+                  v-model="temp.pub"
                   :disabled="!isActive"
-                  type="textarea"
-                  :autosize="{ minRows: 2, maxRows: 4}"
                   @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
                   @keyup.esc.native="dialogFormVisible = false"
                 />
               </el-form-item>
             </el-row>
-
-            <el-row :gutter="50">
-              <el-col :span="10">
-                <el-form-item label="总数" prop="title">
-                  <el-input v-model="temp.pageviews" :disabled="!isActive" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="10">
-                <el-form-item label="库存" prop="title">
-                  <el-input v-model="temp.total_pageviews" :disabled="!isActive" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-
             <el-row>
-              <el-form-item label="简介">
+              <el-form-item label="ISBN号">
                 <el-input
-                  v-model="temp.summary"
+                  v-model="temp.isbn"
                   :disabled="!isActive"
-                  :autosize="{ minRows: 3, maxRows: 15}"
-                  type="textarea"
-                  placeholder="Please input"
+                  @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+                  @keyup.esc.native="dialogFormVisible = false"
                 />
               </el-form-item>
             </el-row>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-form-item label="关键词">
+            <el-input
+              v-model="temp.kw"
+              :disabled="!isActive"
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+              @keyup.esc.native="dialogFormVisible = false"
+            />
+          </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="简介">
+            <el-input
+              v-model="temp.summary"
+              :disabled="!isActive"
+              :autosize="{ minRows: 3, maxRows: 15}"
+              type="textarea"
+              placeholder="Please input"
+            />
+          </el-form-item>
+        </el-row>
+        <el-row :gutter="50">
+          <el-col :span="10">
+            <el-form-item label="总数" prop="title">
+              <el-input v-model="temp.pageviews" :disabled="!isActive" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="库存" prop="title">
+              <el-input v-model="temp.total_pageviews" :disabled="!isActive" />
+            </el-form-item>
           </el-col>
         </el-row>
       </el-form>
@@ -400,7 +414,7 @@
 </template>
 
 <script>
-import { ffetchList, dataTranFormer, dataTest, ffetchList_fuzzy, updateBook, deleteBook, createBook, fetchAlltitle } from '@/api/book'
+import { ffetchList, dataTranFormer, dataTest, ffetchList_fuzzy, updateBook, deleteBook, createBook, fetchAlltitle, getBookDetail } from '@/api/book'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 // import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -679,7 +693,8 @@ export default {
     },
     handleUpdate(row) {
       console.log('handleUpdate(row)')
-      // console.log(row)
+      var r = getBookDetail(row)
+      console.log(r.data)
       this.temp = Object.assign({}, row) // copy obj
       this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'

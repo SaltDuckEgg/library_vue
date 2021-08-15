@@ -11,16 +11,33 @@
         <span style="font-size:20px;padding-top:20px;display:inline-block;">Editor's Dashboard</span>
       </div>
     </div>
-
-    <div>
-      <tempreatrue id="temp" />
-    </div>
-    <div class="bar_container">
-      <chart id="histogram_graph" />
-    </div>
-    <div>
-      <img :src="emptyGif" class="emptyGif" />
-    </div>
+    <el-col :span="40">
+      <el-row :gutter="200">
+        <el-col :span="11">
+          <div>
+            <topbook id="topBook" />
+          </div>
+        </el-col>
+        <el-col :span="11">
+          <div>
+            <topacademy />
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <div>
+          <tempreatrue id="temp" />
+        </div>
+      </el-row>
+      <el-row>
+        <div class="bar_container">
+          <chart id="histogram_graph" />
+        </div>
+      </el-row>
+      <div>
+        <img :src="emptyGif" class="emptyGif" />
+      </div>
+    </el-col>
   </div>
 </template>
 
@@ -30,9 +47,12 @@ import PanThumb from '@/components/PanThumb'
 import GithubCorner from '@/components/GithubCorner'
 import chart from '@/views/mainScreen/editor/DrawBar'
 import tempreatrue from '@/views/mainScreen/editor/Temperature'
+import topbook from '@/views/mainScreen/editor/TopBook'
+import topacademy from '@/views/mainScreen/editor/TopAcademy'
+
 export default {
   name: 'DashboardEditor',
-  components: { PanThumb, GithubCorner, chart, tempreatrue },
+  components: { PanThumb, GithubCorner, chart, tempreatrue, topbook, topacademy },
   data() {
     return {
       emptyGif: 'https://wpimg.wallstcn.com/0e03b7da-db9e-4819-ba10-9016ddfdaed3'
@@ -56,7 +76,8 @@ export default {
 }
 
 .dashboard-editor-container {
-  background-color: #e3e3e3;
+  // background-color: #f1f3f3;
+  background-image: "C:\Users\LianGaoGe\Desktop\work\project\egg\src\bg.jpg";
   min-height: 100vh;
   padding: 50px 60px 0px;
   .pan-info-roles {

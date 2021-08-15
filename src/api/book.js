@@ -100,6 +100,16 @@ export function ffetchList_fuzzy(fuzzy) {
   })
 }
 
+export function getBookDetail(temp) {
+  return request({
+    url: baseUrl + 'bookdetail/',
+    // url: baseUrl + 'bookinfo/',
+    method: 'get',
+    params: { book_id: temp.id }
+
+  })
+}
+
 export function dataTranFormer(oldVal) {
   // console.log('oldVal')
   // console.log(oldVal)

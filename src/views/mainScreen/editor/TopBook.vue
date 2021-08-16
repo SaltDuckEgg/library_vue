@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import GetTopBookWeek from '@/api/book'
 import * as echarts from 'echarts/core'
 import {
   SunburstChart
@@ -44,15 +45,17 @@ export default {
     }
   },
   mounted() {
+    // this.GetData()
     this.DrawBar()
   },
   methods: {
     DrawBar() {
+      // this.GetData()
       this.chartDom = document.getElementById(this.id)
       this.myChart = echarts.init(this.chartDom)
 
       var colors = ['#FFAE57', '#FF7853', '#EA5151', '#CC3F57', '#9A2555']
-      var bgColor = '#E5E5E5'
+      var bgColor = '#FFFFFF'
 
       var itemStyle = {
         star5: {
@@ -68,7 +71,6 @@ export default {
           color: colors[3]
         }
       }
-
       var data = [{
         name: '虚构',
         itemStyle: {
@@ -246,6 +248,7 @@ export default {
         }]
       }]
 
+
       for (var j = 0; j < data.length; ++j) {
         var level1 = data[j].children
         for (var i = 0; i < level1.length; ++i) {
@@ -379,6 +382,10 @@ export default {
       }
 
       this.myChart.setOption(option)
+    },
+    GetData() {
+      var respone = GetTopBookWeek()
+      console.log(respone.res)
     }
   }
 }

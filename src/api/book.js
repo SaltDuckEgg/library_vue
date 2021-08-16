@@ -106,7 +106,15 @@ export function getBookDetail(temp) {
     // url: baseUrl + 'bookinfo/',
     method: 'get',
     params: { book_id: temp.id }
+  })
+}
 
+export function postBookDetail(temp) {
+  return request({
+    url: baseUrl + 'bookdetail/',
+    // url: baseUrl + 'bookinfo/',
+    method: 'post',
+    data: { book_id: temp.id }
   })
 }
 
@@ -160,4 +168,13 @@ export function dataTest(oldVal) {
     timestamp: 1614634668386,
     title: 'Tkmswlwic Nkjhmgn Rdxphihs Merkm Fhxzsdk Alo Myntrnu Kudqhiiudk'
   }]
+}
+
+export function getTopBookWeek() {
+  console.log('________________')
+  return request({
+    url: baseUrl + 'screen_book_week/',
+    // url: baseUrl + 'bookinfo/',
+    method: 'get'
+  })
 }

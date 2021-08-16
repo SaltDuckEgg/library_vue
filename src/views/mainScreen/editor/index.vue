@@ -11,33 +11,42 @@
         <span style="font-size:20px;padding-top:20px;display:inline-block;">Editor's Dashboard</span>
       </div>
     </div>
-    <el-col :span="40">
-      <el-row :gutter="200">
-        <el-col :span="11">
-          <div>
-            <topbook id="topBook" />
+    <div>
+      <el-col :span="20" :push="50">
+        <el-row>
+          <el-col :span="8">
+            <div>
+              <topbook id="topBook" />
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <div>
+              <topacademy />
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <topstudent />
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <div>
+              <tempreatrue id="temp" />
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+          <div class="bar_container">
+            <chart id="histogram_graph" />
           </div>
-        </el-col>
-        <el-col :span="11">
+        </el-row>
+        <el-row>
           <div>
-            <topacademy />
+            <img :src="emptyGif" class="emptyGif" />
           </div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <div>
-          <tempreatrue id="temp" />
-        </div>
-      </el-row>
-      <el-row>
-        <div class="bar_container">
-          <chart id="histogram_graph" />
-        </div>
-      </el-row>
-      <div>
-        <img :src="emptyGif" class="emptyGif" />
-      </div>
-    </el-col>
+        </el-row>
+      </el-col>
+    </div>
   </div>
 </template>
 
@@ -49,10 +58,12 @@ import chart from '@/views/mainScreen/editor/DrawBar'
 import tempreatrue from '@/views/mainScreen/editor/Temperature'
 import topbook from '@/views/mainScreen/editor/TopBook'
 import topacademy from '@/views/mainScreen/editor/TopAcademy'
+import topstudent from '@/views/mainScreen/editor/TopStudent'
+
 
 export default {
   name: 'DashboardEditor',
-  components: { PanThumb, GithubCorner, chart, tempreatrue, topbook, topacademy },
+  components: { PanThumb, GithubCorner, chart, tempreatrue, topbook, topacademy, topstudent },
   data() {
     return {
       emptyGif: 'https://wpimg.wallstcn.com/0e03b7da-db9e-4819-ba10-9016ddfdaed3'

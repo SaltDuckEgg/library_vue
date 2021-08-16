@@ -3,7 +3,7 @@
     <h1>通过组件的方式引入Echarts柱状图</h1>
     <p>{{ msg }}</p>
     <!-- <div class="bar_compon"> -->
-    <div :id="id" style="min-width:400px;min-height: 400px;" />
+    <div :id="id" style="min-width:400px;min-height: 500px;" />
     <!-- </div> -->
   </div>
 </template>

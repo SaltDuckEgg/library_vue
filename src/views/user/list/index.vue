@@ -178,10 +178,10 @@
           <el-radio v-model="temp.sex" label="女" disabled>女</el-radio>
         </el-form-item>
         <el-form-item label="手机号码" :label-width="formLabelWidth" prop="phone">
-          <el-input v-model="temp.phone" autocomplete="off" />
+          <el-input v-model="temp.phone" autocomplete="off" disabled />
         </el-form-item>
         <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
-          <el-input v-model="temp.email" autocomplete="off" />
+          <el-input v-model="temp.email" autocomplete="off" disabled />
         </el-form-item>
         <el-form-item label="学院" :label-width="formLabelWidth">
           <el-input v-model="temp.academy" autocomplete="off" disabled />

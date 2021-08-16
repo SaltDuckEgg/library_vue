@@ -35,8 +35,9 @@
                 :headers="headers"
                 :show-file-list="false"
                 :before-upload="beforeAvatarUpload"
+                :disabled="this.$store.getters.roles[0] === 'inactive_user'"
               >
-                <img v-if="imageUrl" :src="imageUrl" class="avatar" alt="">
+                <img v-if="imageUrl" :src="imageUrl" class="avatar" alt="" style="width: 80px; height: 80px">
                 <i v-else class="el-icon-plus avatar-uploader-icon" />
               </el-upload>
             </div>
@@ -100,13 +101,35 @@
         </el-card>
       </el-col>
       <el-dialog title="填写用户信息" :visible.sync="activationFormVisible">
-        <el-form ref="activationForm" :model="activationForm" :rules="activationRules" class="login-form" @keyup.enter.native="activationSubmit">
+        <el-form
+          ref="activationForm"
+          :model="activationForm"
+          :rules="activationRules"
+          class="login-form"
+          @keyup.enter.native="activationSubmit"
+        >
+          <el-form-item label="新密码" :label-width="formLabelWidth" prop="newPassword">
+            <el-input v-model="activationForm.newPassword" autocomplete="off" show-password />
+          </el-form-item>
+          <el-form-item label="确认密码" :label-width="formLabelWidth" prop="repeatPassword">
+            <el-input v-model="activationForm.repeatPassword" autocomplete="off" show-password />
+          </el-form-item>
           <el-form-item label="手机号码" :label-width="formLabelWidth" prop="phone">
             <el-input v-model="activationForm.phone" autocomplete="off" />
           </el-form-item>
-          <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
-            <el-input v-model="activationForm.email" autocomplete="off" />
+          <el-form-item label="验证码" :label-width="formLabelWidth" prop="code">
+            <el-row :gutter="0">
+              <el-col :span="16">
+                <el-input v-model="activationForm.sms_code" />
+              </el-col>
+              <el-col :span="8" style="padding-left: 10px">
+                <el-button :disabled="codeDisabled" style="width: 150px" @click="getSMSCode">{{ btnText }}</el-button>
+              </el-col>
+            </el-row>
           </el-form-item>
+          <!--          <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">-->
+          <!--            <el-input v-model="activationForm.email" autocomplete="off" />-->
+          <!--          </el-form-item>-->
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="activationFormVisible = false">取 消</el-button>
@@ -130,26 +153,36 @@
           <el-button type="primary" :loading="loading" @click="passwordSubmit">确 定</el-button>
         </div>
       </el-dialog>
-      <el-dialog title="修改手机号码" :visible.sync="phoneFormVisible" @keyup.enter.native="modifySubmit(modifyForm.phone, '')">
-        <el-form ref="phoneForm" :model="modifyForm" :rules="phoneRules">
+      <el-dialog title="修改手机号码" :visible.sync="phoneFormVisible" @keyup.enter.native="modifyPhone">
+        <el-form ref="phoneForm" :model="phoneForm" :rules="phoneRules">
           <el-form-item label="手机号码" :label-width="formLabelWidth" prop="phone">
-            <el-input v-model="modifyForm.phone" autocomplete="off" />
+            <el-input v-model="phoneForm.phone" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="验证码" :label-width="formLabelWidth" prop="code">
+            <el-row :gutter="0">
+              <el-col :span="16">
+                <el-input v-model="phoneForm.sms_code" />
+              </el-col>
+              <el-col :span="8" style="padding-left: 10px">
+                <el-button :disabled="codeDisabled" style="width: 150px" @click="getSMSCode">{{ btnText }}</el-button>
+              </el-col>
+            </el-row>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="phoneFormVisible = false">取 消</el-button>
-          <el-button type="primary" :loading="loading" @click="modifySubmit(modifyForm.phone, '')">确 定</el-button>
+          <el-button type="primary" :loading="loading" @click="modifyPhone">确 定</el-button>
         </div>
       </el-dialog>
       <el-dialog title="修改邮箱" :visible.sync="emailFormVisible">
-        <el-form ref="emailForm" :model="modifyForm" :rules="emailRules" @keyup.enter.native="modifySubmit('', modifyForm.email)">
+        <el-form ref="emailForm" :model="emailForm" :rules="emailRules" @keyup.enter.native="modifyEmail">
           <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
-            <el-input v-model="modifyForm.email" autocomplete="off" />
+            <el-input v-model="emailForm.email" autocomplete="off" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="emailFormVisible = false">取 消</el-button>
-          <el-button type="primary" :loading="loading" @click="modifySubmit('', modifyForm.email)">确 定</el-button>
+          <el-button type="primary" :loading="loading" @click="modifyEmail">确 定</el-button>
         </div>
       </el-dialog>
     </el-row>
@@ -159,7 +192,7 @@
 <script>
 import { Message } from 'element-ui'
 import { getToken } from '@/utils/auth'
-import { uploadAvatar } from '@/api/user'
+import { getUidByPhone, uploadAvatar } from '@/api/user'
 // import js_sha256 from 'js-sha256'
 
 export default {
@@ -194,8 +227,20 @@ export default {
       }
     }
     const validateRepeatPassword = (rule, value, callback) => {
-      if (value !== this.passwordForm.newPassword) {
+      let currentForm = this.passwordFormVisible
+      if (this.activationFormVisible) {
+        currentForm = this.activationForm
+      }
+      console.log(currentForm)
+      if (value !== currentForm.newPassword) {
         callback(new Error('两次输入的密码不一致'))
+      } else {
+        callback()
+      }
+    }
+    const validateCode = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('验证码不能为空'))
       } else {
         callback()
       }
@@ -217,26 +262,40 @@ export default {
       emailFormVisible: false,
       loading: false,
       activationForm: {
-        // name: '',
-        // sex: '',
+        newPassword: '',
+        repeatPassword: '',
         phone: '',
-        email: ''
-        // academy: '',
-        // class_num: ''
+        uid: '',
+        sms_code: ''
       },
       passwordForm: {
         oldPassword: '',
         newPassword: '',
         repeatPassword: ''
       },
+      emailForm: {
+        email: ''
+      },
+      phoneForm: {
+        phone: '',
+        uid: '',
+        sms_code: ''
+      },
       modifyForm: {
         phone: '',
         email: ''
       },
       formLabelWidth: '100px',
+      codeDisabled: false,
+      btnText: '发送验证码',
+      countDown: 120,
+      isPhoneVerified: false,
       activationRules: {
+        newPassword: [{ required: true, trigger: 'blur', validator: validateNewPassword }],
+        repeatPassword: [{ required: true, trigger: 'blur', validator: validateRepeatPassword }],
         phone: [{ required: true, trigger: 'blur', validator: validatePhone }],
-        email: [{ trigger: 'blur', validator: validateEmail }]
+        code: [{ required: true, trigger: 'blur', validator: validateCode }]
+        // email: [{ trigger: 'blur', validator: validateEmail }]
       },
       passwordRules: {
         // oldPassword: [{ required: true, trigger: 'blur', validator: validateOldPassword }],
@@ -244,7 +303,8 @@ export default {
         repeatPassword: [{ required: true, trigger: 'blur', validator: validateRepeatPassword }]
       },
       phoneRules: {
-        phone: [{ required: true, trigger: 'blur', validator: validatePhone }]
+        phone: [{ required: true, trigger: 'blur', validator: validatePhone }],
+        code: [{ required: true, trigger: 'blur', validator: validateCode }]
       },
       emailRules: {
         email: [{ required: true, trigger: 'blur', validator: validateEmail }]
@@ -253,6 +313,9 @@ export default {
   },
   created() {
     this.getUser()
+  },
+  mounted() {
+    this.time = this.countDown
   },
   methods: {
     getUser() {
@@ -264,9 +327,49 @@ export default {
         })
       }
     },
+    getSMSCode() {
+      let currentForm = this.activationForm
+      if (this.phoneFormVisible) {
+        currentForm = this.phoneFormVisible
+      }
+      this.$refs.activationForm.validateField('phone', errorMessage => {
+        if (errorMessage) {
+          Message({
+            message: 'errorMessage',
+            type: 'error',
+            duration: 5 * 1000
+          })
+        } else {
+          getUidByPhone({ phone: currentForm.phone })
+            .then(response => {
+              currentForm.uid = response.data.uid
+              console.log(this.activationForm.uid)
+              Message({
+                message: '已发送验证码！',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              const timer = setInterval(() => {
+                this.time--
+                this.btnText = `${this.time}s后重新发送`
+                this.codeDisabled = true
+                if (this.time === 0) {
+                  this.codeDisabled = false
+                  this.btnText = '重新发送'
+                  this.time = this.countDown
+                  clearInterval(timer)
+                }
+              }, 1000)
+            })
+            .catch(error => {
+              console.log(error)
+            })
+        }
+      })
+    },
     activationSubmit() {
       this.$refs.activationForm.validate(async valid => {
-        if (valid) {
+        if (valid && this.activationForm.uid !== '') {
           this.loading = true
           await this.$store.dispatch('user/activate', this.activationForm)
           await this.$store.dispatch('user/getInfo')
@@ -302,19 +405,30 @@ export default {
       this.loading = false
       this.passwordFormVisible = false
     },
-    modifySubmit(phone, email) {
-      let currentForm
-      if (phone === '') {
-        currentForm = this.$refs.emailForm
-        this.modifyForm.phone = this.$store.getters.phone
-      } else {
-        currentForm = this.$refs.phoneForm
-        this.modifyForm.email = this.$store.getters.email
-      }
-      currentForm.validate(async valid => {
+    modifyPhone() {
+      this.$refs.phoneForm.validate(async valid => {
+        if (valid && this.phoneForm.uid !== '') {
+          this.loading = true
+          await this.$store.dispatch('user/currentUserPhone', this.phoneForm)
+          await this.$store.dispatch('user/getInfo')
+          await this.getUser()
+        } else {
+          Message({
+            message: '请确认输入用户信息正确！',
+            type: 'error',
+            duration: 5 * 1000
+          })
+          return false
+        }
+      })
+      this.loading = false
+      this.phoneFormVisible = false
+    },
+    modifyEmail() {
+      this.$refs.emailForm.validate(async valid => {
         if (valid) {
           this.loading = true
-          await this.$store.dispatch('user/currentUserModify', this.modifyForm)
+          await this.$store.dispatch('user/currentUserEmail', this.emailForm)
           await this.$store.dispatch('user/getInfo')
           await this.getUser()
         } else {
@@ -325,10 +439,9 @@ export default {
           })
           return false
         }
+        this.loading = false
+        this.emailFormVisible = false
       })
-      this.loading = false
-      this.emailFormVisible = false
-      this.phoneFormVisible = false
     },
     beforeAvatarUpload(file) {
       if (file.type.indexOf('image/') === -1) {

@@ -1,9 +1,6 @@
 <template>
   <div style="display: flex;flex-direction: column;align-items: center;">
-    <div class="title-container">
-      <h2 class="title" style="color: #eee">扫码登录</h2>
-    </div>
-    <div v-loading="!qr" style="position: relative;width: 200px;height: 200px;padding: 0;margin: 0">
+    <div v-loading="!qr" style="position: relative;width: 160px;height: 160px;padding: 0;margin: 0">
       <img v-if="qr" :src="qr" style="width: 100%" alt="qr-code">
       <transition name="fade">
         <div v-if="token" class="qr-overlay">

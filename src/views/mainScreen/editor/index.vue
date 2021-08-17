@@ -60,7 +60,6 @@ import topbook from '@/views/mainScreen/editor/TopBook'
 import topacademy from '@/views/mainScreen/editor/TopAcademy'
 import topstudent from '@/views/mainScreen/editor/TopStudent'
 
-
 export default {
   name: 'DashboardEditor',
   components: { PanThumb, GithubCorner, chart, tempreatrue, topbook, topacademy, topstudent },
@@ -88,7 +87,6 @@ export default {
 
 .dashboard-editor-container {
   // background-color: #f1f3f3;
-  background-image: "C:\Users\LianGaoGe\Desktop\work\project\egg\src\bg.jpg";
   min-height: 100vh;
   padding: 50px 60px 0px;
   .pan-info-roles {

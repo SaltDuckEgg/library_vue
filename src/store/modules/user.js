@@ -1,4 +1,14 @@
-import { login, getInfo, activate, password, modify, deleteUser, currentUserEmail, currentUserPhone } from '@/api/user'
+import {
+  login,
+  getInfo,
+  activate,
+  password,
+  modify,
+  deleteUser,
+  currentUserEmail,
+  currentUserPhone,
+  loginByPhone
+} from '@/api/user'
 import { getToken, setToken, removeToken, getPassword, setPassword, removePassword } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { Message } from 'element-ui'
@@ -75,6 +85,20 @@ const actions = {
   loginViaToken({ commit }, token) {
     commit('SET_TOKEN', token)
     setToken(token)
+  },
+
+  loginByPhone({ commit }, userInfo) {
+    const { uid, sms_code } = userInfo
+    return new Promise((resolve, reject) => {
+      loginByPhone({ uid: uid.trim(), sms_code: sms_code }).then(response => {
+        const token = response.data.token
+        commit('SET_TOKEN', token)
+        setToken(token)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
   },
 
   // get user info

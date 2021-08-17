@@ -42,7 +42,7 @@ export function addSaveFile(data) {
   })
 }
 
-export function getUidByPhone(data) {
+export function activationGetUid(data) {
   return request({
     url: 'http://124.71.225.17:8000/user/activate_sendSMScode/',
     method: 'post',
@@ -53,6 +53,22 @@ export function getUidByPhone(data) {
 export function activate(data) {
   return request({
     url: 'http://124.71.225.17:8000/user/activate_verifySMScode/',
+    method: 'post',
+    data: data
+  })
+}
+
+export function loginGetUid(data) {
+  return request({
+    url: 'http://124.71.225.17:8000/user/login_sendSMScode/',
+    method: 'post',
+    data: data
+  })
+}
+
+export function loginByPhone(data) {
+  return request({
+    url: 'http://124.71.225.17:8000/user/login_verifySMScode/',
     method: 'post',
     data: data
   })

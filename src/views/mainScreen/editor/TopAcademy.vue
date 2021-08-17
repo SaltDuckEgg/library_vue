@@ -56,11 +56,11 @@ export default {
           {
             name: '面积模式',
             type: 'pie',
-            radius: [30, 175],
+            radius: [10, 175],
             center: ['50%', '50%'],
             roseType: 'area',
             itemStyle: {
-              borderRadius: 6
+              borderRadius: 25
             },
             data: [
               { value: 40, name: 'rose 1' },

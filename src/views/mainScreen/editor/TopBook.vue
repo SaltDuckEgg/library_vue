@@ -17,6 +17,7 @@ import {
   CanvasRenderer
 } from 'echarts/renderers'
 import { getTopBookWeek } from '@/api/book'
+import { defaults } from 'codemirror'
 
 echarts.use(
   [SunburstChart, CanvasRenderer]
@@ -52,7 +53,7 @@ export default {
       this.chartDom = document.getElementById(this.id)
       this.myChart = echarts.init(this.chartDom)
 
-      var colors = ['#283D3B', '#197278', '#EDDDD4', '#C44536', '#772E25']
+      var colors = ['#283D3B', '#197278', '#C44536', '#EDDDD4', '#772E25']
       var bgColor = '#FFFFFF'
 
       var itemStyle = {
@@ -163,6 +164,9 @@ export default {
                   case '0☆':
                     bookScoreId = 3
                     return itemStyle.star2
+                  default:
+                    bookScoreId = 0
+                    return itemStyle.star5
                 }
               })(block[star].name)
 

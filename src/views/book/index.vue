@@ -414,7 +414,11 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import { ffetchList, dataTranFormer, ffetchList_fuzzy, updateBook, deleteBook, createBook, fetchAlltitle, getBookDetail } from '@/api/book'
+=======
+import { ffetchList, dataTranFormer, ffetchList_fuzzy, updateBook, deleteBook, createBook, getBookDetail } from '@/api/book'
+>>>>>>> 5131e59c268815c3281b7d026f147a18749c1afe
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 // import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -512,14 +516,14 @@ export default {
     }
   },
   computed: {
-    isAdmin: function () {
+    isAdmin: function() {
       if (this.$store.getters.roles[0] === 'administrator') {
         return true
       } else {
         return false
       }
     },
-    isActive: function () {
+    isActive: function() {
       if (this.$store.getters.roles[0] === 'inactive_user') {
         return false
       } else {
@@ -731,7 +735,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(async () => {
+      }).then(async() => {
         await this.deleteBook(row, index)
         await this.getList()
       })
@@ -823,7 +827,7 @@ export default {
 
 <style lang="scss" scoped>
 .input {
-  width: "100px";
+  width: 100px;
 }
 .el-row {
   margin-bottom: 20px;

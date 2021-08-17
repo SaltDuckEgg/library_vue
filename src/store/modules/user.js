@@ -1,4 +1,4 @@
-import { login, getInfo, activate, password, currentUserModify, modify, deleteUser } from '@/api/user'
+import { login, getInfo, activate, password, modify, deleteUser, currentUserEmail, currentUserPhone } from '@/api/user'
 import { getToken, setToken, removeToken, getPassword, setPassword, removePassword } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { Message } from 'element-ui'
@@ -130,8 +130,12 @@ const actions = {
 
   activate({ commit, state }, activationInfo) {
     return new Promise((resolve, reject) => {
-      const { phone, email } = activationInfo
-      activate({ phone: phone, email: email, password: state.password }).then(response => {
+      const { newPassword, uid, sms_code } = activationInfo
+      activate({
+        password: js_sha256.sha256(newPassword),
+        uid: uid,
+        sms_code: sms_code
+      }).then(response => {
         Message({
           message: '成功激活用户！',
           type: 'success',
@@ -161,12 +165,28 @@ const actions = {
     })
   },
 
-  currentUserModify({ commit }, modifyInfo) {
+  currentUserPhone({ commit }, modifyInfo) {
+    const { uid, sms_code } = modifyInfo
     return new Promise((resolve, reject) => {
-      const { phone, email } = modifyInfo
-      currentUserModify({ phone: phone, email: email }).then(response => {
+      currentUserPhone({ uid: uid, sms_code: sms_code }).then(response => {
         Message({
-          message: '修改成功！',
+          message: '成功修改手机号码！',
+          type: 'success',
+          duration: 5 * 1000
+        })
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  currentUserEmail({ commit }, modifyInfo) {
+    const { email } = modifyInfo
+    return new Promise((resolve, reject) => {
+      currentUserEmail({ email: email }).then(response => {
+        Message({
+          message: '已向邮箱发送确认邮件！',
           type: 'success',
           duration: 5 * 1000
         })

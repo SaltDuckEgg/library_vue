@@ -9,15 +9,10 @@
 </template>
 
 <script>
-import * as echarts from 'echarts'
-/* 由于全局引入会将所有的echarts图表打包，导致体积过大，所以在本项目中，采用组建的形式按需引入*/
-// 引入基本模板
-// const echarts = require('echarts/lib/echarts')
-// // 引入柱状图组件
-// require('echarts/lib/chart/bar')
-// // 引入提示框和title组件
-// require('echarts/lib/component/tooltip')
-// require('echarts/lib/component/title')
+const echarts = require('echarts/lib/echarts')
+require('echarts/lib/component/toolbox')
+require('echarts/lib/component/legend')
+require('echarts/lib/chart/pie')
 
 export default {
   name: 'BookTop',
@@ -40,71 +35,47 @@ export default {
     DrawBar() {
       this.chartDom = document.getElementById(this.id)
       this.myChart = echarts.init(this.chartDom)
-      var option = {
-        backgroundColor: '#E5E5E5',
-
-        title: {
-          text: 'Customized Pie',
-          left: 'center',
-          top: 20,
-          textStyle: {
-            color: '#ccc'
-          }
+      this.fetchData()
+      this.myChart.setOption(this.option)
+    },
+    fetchData() {
+      this.option = {
+        legend: {
+          top: 'bottom'
         },
-
-        tooltip: {
-          trigger: 'item'
-        },
-
-        visualMap: {
-          show: false,
-          min: 80,
-          max: 600,
-          inRange: {
-            colorLightness: [0, 1]
+        toolbox: {
+          show: true,
+          feature: {
+            mark: { show: true },
+            dataView: { show: true, readOnly: false },
+            restore: { show: true },
+            saveAsImage: { show: true }
           }
         },
         series: [
           {
-            name: '访问来源',
+            name: '面积模式',
             type: 'pie',
-            radius: '60%',
+            radius: [30, 175],
             center: ['50%', '50%'],
-            data: [
-              { value: 335, name: '直接访问' },
-              { value: 310, name: '邮件营销' },
-              { value: 274, name: '联盟广告' },
-              { value: 235, name: '视频广告' },
-              { value: 400, name: '搜索引擎' }
-            ].sort(function (a, b) { return a.value - b.value }),
-            roseType: 'radius',
-            label: {
-              color: 'rgba(255, 255, 255, 1)',
-              fontSize: 20
-            },
-            labelLine: {
-              lineStyle: {
-                color: 'rgba(255, 255, 255, 0.3)'
-              },
-              smooth: 0.2,
-              length: 10,
-              length2: 20
-            },
+            roseType: 'area',
             itemStyle: {
-              color: '#c23531',
-              shadowBlur: 200,
-              shadowColor: 'rgba(0, 0, 0, 0.5)'
+              borderRadius: 6
             },
-
-            animationType: 'scale',
-            animationEasing: 'elasticOut',
-            animationDelay: function (idx) {
-              return Math.random() * 200
-            }
+            data: [
+              { value: 40, name: 'rose 1' },
+              { value: 38, name: 'rose 2' },
+              { value: 32, name: 'rose 3' },
+              { value: 30, name: 'rose 4' },
+              { value: 28, name: 'rose 5' },
+              { value: 26, name: 'rose 6' },
+              { value: 22, name: 'rose 7' },
+              { value: 18, name: 'rose 8' }
+            ]
           }
         ]
       }
-      this.myChart.setOption(option)
+
     }
   }
 }

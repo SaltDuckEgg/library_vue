@@ -414,7 +414,7 @@
 </template>
 
 <script>
-import { ffetchList, dataTranFormer, dataTest, ffetchList_fuzzy, updateBook, deleteBook, createBook, fetchAlltitle, getBookDetail } from '@/api/book'
+import { ffetchList, dataTranFormer, ffetchList_fuzzy, updateBook, deleteBook, createBook, fetchAlltitle, getBookDetail } from '@/api/book'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 // import Pagination from '@/components/Pagination' // secondary package based on el-pagination

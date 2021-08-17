@@ -171,7 +171,6 @@ export function dataTest(oldVal) {
 }
 
 export function getTopBookWeek() {
-  console.log('________________')
   return request({
     url: baseUrl + 'screen_book_week/',
     // url: baseUrl + 'bookinfo/',

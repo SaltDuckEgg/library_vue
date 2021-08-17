@@ -5,23 +5,48 @@
     <panel-group @handleSetLineChartData="handleSetLineChartData" />
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData" />
+      <!-- <line-chart :chart-data="lineChartData" /> -->
+      <imageplayer />
+    </el-row>
+
+    <el-row :gutter="32">
+      <el-col :xs="36" :sm="36" :lg="12">
+        <div class="chart-wrapper">
+          <!-- <raddar-chart /> -->
+          <topacademy id="topacademy1" />
+        </div>
+      </el-col>
+      <el-col :xs="24" :sm="24" :lg="12">
+        <div class="chart-wrapper">
+          <!-- <pie-chart /> -->
+          <topbook id="topBook1" />
+        </div>
+      </el-col>
+      <!-- <el-col :xs="24" :sm="24" :lg="8">
+        <div class="chart-wrapper">
+          <bar-chart />
+        </div>
+      </el-col>-->
     </el-row>
 
     <el-row :gutter="32">
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <raddar-chart />
+          <!-- <raddar-chart /> -->
+          <!-- <topacademy /> -->
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <pie-chart />
+          <!-- <pie-chart /> -->
+          <tempreatrue id="tempreature" />
+
+          <!-- <topbook id="topBook" /> -->
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <bar-chart />
+          <!-- <bar-chart /> -->
         </div>
       </el-col>
     </el-row>
@@ -71,7 +96,12 @@ import BarChart from './components/BarChart'
 import TransactionTable from './components/TransactionTable'
 import TodoList from './components/TodoList'
 import BoxCard from './components/BoxCard'
-
+import chart from './components/DrawBar'
+import tempreatrue from './components/Temperature'
+import topbook from './components/TopBook'
+import topacademy from './components/TopAcademy'
+import topstudent from './components/TopStudent'
+import imageplayer from './components/ImagePlayer'
 const lineChartData = {
   // 借还书
   newVisitis: {
@@ -103,7 +133,13 @@ export default {
     BarChart,
     TransactionTable,
     TodoList,
-    BoxCard
+    BoxCard,
+    chart,
+    tempreatrue,
+    topacademy,
+    topbook,
+    topstudent,
+    imageplayer
   },
   data() {
     return {

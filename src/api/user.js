@@ -135,3 +135,15 @@ export function deleteUser(id) {
     method: 'delete'
   })
 }
+
+// ====================
+export function getTopAcademy() {
+  // return request({
+  //   url: 'http://124.71.225.17:8000/user/academyRatio',
+  //   methos: 'get'
+  // })
+  return request({
+    url: 'http://124.71.225.17:8000/user/academy/',
+    method: 'get'
+  })
+}

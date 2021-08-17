@@ -785,11 +785,7 @@ export default {
     formatJson(filterVal) {
       // console.log('formatJson(filterVal)')
       return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
+        return v[j]
       }))
     },
     getSortClass(key) {

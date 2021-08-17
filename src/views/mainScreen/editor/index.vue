@@ -87,6 +87,7 @@ export default {
 
 .dashboard-editor-container {
   // background-color: #f1f3f3;
+  // background-image: "C:\Users\LianGaoGe\Desktop\work\project\egg\src\bg.jpg";
   min-height: 100vh;
   padding: 50px 60px 0px;
   .pan-info-roles {

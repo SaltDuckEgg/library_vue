@@ -83,7 +83,7 @@ export default {
             children: []
           }]
         var category_list = []
-        response.data.res.forEach(function (item) {
+        response.data.res.forEach(function(item) {
           if (item.bookinfo.category in category_list) {
             category_list[item.bookinfo.category].push({
               title: item.bookinfo.title,
@@ -121,7 +121,6 @@ export default {
             )
           }
 
-
           res[main_loop].children.push(
             {
               name: category,
@@ -150,7 +149,7 @@ export default {
             var bookScore = []
             var bookScoreId
             for (var star = 0; star < block.length; ++star) {
-              var style = (function (name) {
+              var style = (function(name) {
                 switch (name) {
                   case '3☆':
                     bookScoreId = 0
@@ -182,7 +181,7 @@ export default {
                   opacity: 1,
                   color: style.color
                 }
-                block[star].children.forEach(function (book) {
+                block[star].children.forEach(function(book) {
                   book.value = 1
                   book.itemStyle = style
 
@@ -220,7 +219,7 @@ export default {
             type: 'sunburst',
             center: ['50%', '50%'],
             data: data,
-            sort: function (a, b) {
+            sort: function(a, b) {
               if (a.depth === 1) {
                 return b.getValue() - a.getValue()
               } else {
@@ -265,7 +264,7 @@ export default {
                 shadowColor: colors[0]
               },
               label: {
-                position: 'outside',
+                position: 'outside'
                 // textShadowBlur: 5,
                 // textShadowColor: '#333'
               },
@@ -279,11 +278,6 @@ export default {
         }
         this.myChart.setOption(option)
       })
-
-
-
-
-
     }
   }
 }

@@ -1,17 +1,17 @@
 <template>
   <div class="login-container">
-    <div style="display: flex;width: 100%;height: 100vh;align-items: center;justify-content: center">
+    <div class="title-container">
+      <h3 class="title">中南大学图书馆管理系统</h3>
+    </div>
+    <div v-if="loginMode===1" style="display: flex;width: 100%;align-items: center;justify-content: center">
       <el-form
         ref="loginForm"
         :model="loginForm"
         :rules="loginRules"
         class="login-form"
-        autocomplete="on"
+        autocomplete="off"
         label-position="left"
       >
-        <div class="title-container">
-          <h3 class="title">中南大学图书馆管理系统登录</h3>
-        </div>
 
         <el-form-item prop="username">
           <span class="svg-container">
@@ -24,66 +24,105 @@
             name="username"
             type="text"
             tabindex="1"
-            autocomplete="on"
+            autocomplete="off"
           />
         </el-form-item>
 
-        <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-          <el-form-item prop="password">
-            <span class="svg-container">
-              <svg-icon icon-class="password" />
-            </span>
-            <el-input
-              :key="passwordType"
-              ref="password"
-              v-model="loginForm.password"
-              :type="passwordType"
-              placeholder="密码"
-              name="password"
-              tabindex="2"
-              autocomplete="on"
-              @keyup.native="checkCapslock"
-              @blur="capsTooltip = false"
-              @keyup.enter.native="handleLogin"
-            />
-            <span class="show-pwd" @click="showPwd">
-              <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-            </span>
-          </el-form-item>
-        </el-tooltip>
+        <el-form-item prop="password">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            :key="passwordType"
+            ref="password"
+            v-model="loginForm.password"
+            :type="passwordType"
+            placeholder="密码"
+            name="password"
+            tabindex="2"
+            autocomplete="off"
+            @keyup.native="checkCapslock"
+            @blur="capsTooltip = false"
+            @keyup.enter.native="handleLogin"
+          />
+          <span class="show-pwd" @click="showPwd">
+            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          </span>
+        </el-form-item>
 
         <el-button
           :loading="loading"
           type="primary"
-          style="width:100%;margin-bottom:30px;"
+          style="width:100%;margin-top:10px;font-size: 16px"
           @click.native.prevent="handleLogin"
         >登录
         </el-button>
 
-        <div style="position:relative" />
       </el-form>
-      <div style="height: 50%;border-right: #ffffff55 solid 1px;margin: 0 5em;" />
+    </div>
+    <div v-if="loginMode===2" class="qrcode-login">
       <QRLogin />
     </div>
-
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business simulation! ! !
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
+    <div v-if="loginMode===3" class="smscode-login" style="display: flex;width: 100%;align-items: center;justify-content: center">
+      <el-form ref="phoneForm" class="login-form" label-position="left" :model="phoneForm" :rules="phoneRules">
+        <el-form-item type="text" tabindex="1" prop="phone">
+          <span class="svg-container">
+            <svg-icon icon-class="user" />
+          </span>
+          <el-input v-model="phoneForm.phone" placeholder="手机号码" autocomplete="off" />
+        </el-form-item>
+        <el-form-item prop="code">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            ref="smscode"
+            v-model="phoneForm.sms_code"
+            placeholder="验证码"
+            name="smscode"
+            tabindex="2"
+            autocomplete="off"
+            style="width: 140px"
+          />
+          <el-button
+            type="primary"
+            :disabled="codeDisabled"
+            class="sms_button"
+            @click="getSMSCode"
+          >{{ btnText }}</el-button>
+        </el-form-item>
+        <el-button
+          :loading="loading"
+          type="primary"
+          style="width:100%;margin-top:10px;font-size: 16px"
+          @click.native.prevent="SMSCodeLogin"
+        >登录
+        </el-button>
+      </el-form>
+    </div>
+    <div class="switch-login">
+      <span class="login-mode" @click="loginMode=1">
+        <svg-icon icon-class="login-password" class="login-svg-icon" />
+      </span>
+      <span class="login-mode" @click="loginMode=2">
+        <svg-icon icon-class="login-qrcode" class="login-svg-icon" />
+      </span>
+      <span class="login-mode" @click="loginMode=3">
+        <svg-icon icon-class="login-smscode" class="login-svg-icon" />
+      </span>
+    </div>
   </div>
 </template>
 
 <script>
 import { validUsername } from '@/utils/validate'
-import SocialSign from './components/SocialSignin'
 import QRLogin from '@/views/login/components/QRLogin'
+import { Message } from 'element-ui'
+import { loginGetUid } from '@/api/user'
 
 export default {
   name: 'Login',
-  components: { QRLogin, SocialSign },
+  components: { QRLogin },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
@@ -99,7 +138,22 @@ export default {
         callback()
       }
     }
+    const validatePhone = (rule, value, callback) => {
+      if (!(/^1[3-9]\d{9}$/.test(value))) {
+        callback(new Error('请输入正确的手机号'))
+      } else {
+        callback()
+      }
+    }
+    const validateCode = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('验证码不能为空'))
+      } else {
+        callback()
+      }
+    }
     return {
+      loginMode: 1,
       loginForm: {
         username: '',
         password: ''
@@ -108,6 +162,18 @@ export default {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
+      phoneForm: {
+        phone: '',
+        uid: '',
+        sms_code: ''
+      },
+      phoneRules: {
+        phone: [{ required: true, trigger: 'blur', validator: validatePhone }],
+        code: [{ required: true, trigger: 'blur', validator: validateCode }]
+      },
+      btnText: '发送验证码',
+      codeDisabled: false,
+      countDown: 120,
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
@@ -137,6 +203,7 @@ export default {
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
+    this.time = this.countDown
   },
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
@@ -181,21 +248,78 @@ export default {
         }
         return acc
       }, {})
+    },
+    getSMSCode() {
+      this.$refs.phoneForm.validateField('phone', errorMessage => {
+        if (errorMessage) {
+          Message({
+            message: '请输入正确的手机号码',
+            type: 'error',
+            duration: 5 * 1000
+          })
+        } else {
+          loginGetUid({ phone: this.phoneForm.phone })
+            .then(response => {
+              this.phoneForm.uid = response.data.uid
+              console.log(this.phoneForm.uid)
+              Message({
+                message: '已发送验证码！',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              const timer = setInterval(() => {
+                this.time--
+                this.btnText = `${this.time}s后重新发送`
+                this.codeDisabled = true
+                if (this.time === 0) {
+                  this.codeDisabled = false
+                  this.btnText = '重新发送'
+                  this.time = this.countDown
+                  clearInterval(timer)
+                }
+              }, 1000)
+            })
+            .catch(error => {
+              console.log(error)
+            })
+        }
+      })
+    },
+    SMSCodeLogin() {
+      this.$refs.phoneForm.validate(valid => {
+        if (valid && this.phoneForm.uid !== '') {
+          this.loading = true
+          this.$store.dispatch('user/loginByPhone', this.phoneForm)
+            .then(() => {
+              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+              this.loading = false
+            })
+            .catch(() => {
+              this.loading = false
+            })
+        } else {
+          Message({
+            message: '请确认输入用户信息正确！',
+            type: 'error',
+            duration: 5 * 1000
+          })
+          console.log('error submit!!')
+          return false
+        }
+      })
     }
   }
 }
 </script>
 
 <style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
 $bg: #283443;
 $light_gray: #fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
+    background-color: transparent;
     color: $cursor;
   }
 }
@@ -204,29 +328,25 @@ $cursor: #fff;
 .login-container {
   .el-input {
     display: inline-block;
-    height: 47px;
     width: 85%;
 
     input {
       background: transparent;
-      border: 0px;
+      border: 0;
       -webkit-appearance: none;
-      border-radius: 0px;
+      border-radius: 0;
+      border-bottom: solid #fff 1px;
+      outline: none;
       padding: 12px 5px 12px 15px;
+      font-size: 16px;
+      letter-spacing: 1px;
       color: $light_gray;
-      height: 47px;
       caret-color: $cursor;
-
-      &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: $cursor !important;
-      }
     }
   }
 
   .el-form-item {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
+    border: 0 solid;
     border-radius: 5px;
     color: #454545;
   }
@@ -239,33 +359,36 @@ $dark_gray: #889aa4;
 $light_gray: #eee;
 
 .login-container {
-  min-height: 100%;
-  width: 100%;
-  background-color: $bg;
-  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 40px;
+  background: rgba(0, 0, 0, 0.6);
+  box-sizing: border-box;
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  width: 450px;
+
+    .h3 {
+      margin: 0 0 30px;
+      padding: 0;
+      color: #fff;
+      text-align: center;
+    }
 
   .login-form {
     position: relative;
     width: 400px;
     max-width: 100%;
     overflow: hidden;
-  }
-
-  .tips {
-    font-size: 14px;
-    color: #fff;
-    margin-bottom: 10px;
-
-    span {
-      &:first-of-type {
-        margin-right: 16px;
-      }
-    }
+    align-items: center;
+    justify-content: center
   }
 
   .svg-container {
-    padding: 6px 5px 6px 15px;
-    color: $dark_gray;
+    padding: 6px 5px 6px 5px;
+    color: $light_gray;
     vertical-align: middle;
     width: 30px;
     display: inline-block;
@@ -277,7 +400,7 @@ $light_gray: #eee;
     .title {
       font-size: 26px;
       color: $light_gray;
-      margin: 0px auto 40px auto;
+      margin: 0 auto 40px auto;
       text-align: center;
       font-weight: bold;
     }
@@ -285,25 +408,54 @@ $light_gray: #eee;
 
   .show-pwd {
     position: absolute;
-    right: 10px;
+    right: 0;
     top: 7px;
     font-size: 16px;
-    color: $dark_gray;
+    color: lightgray;
     cursor: pointer;
     user-select: none;
   }
 
-  .thirdparty-button {
-    position: relative;
-    float: right;
-    right: 0;
-    bottom: 6px;
+  .el-form-item{
+    font-size: 16px;
+    .sms_button {
+      width:43%;
+      font-size: 16px;
+      margin-right: 20px;
+      margin-top: 5px;
+      height: 40px;
+      float: right
+    }
+  }
+}
+
+.switch-login {
+  margin-top: 30px;
+  text-align: center;
+  width: 100%;
+
+  .login-mode {
+    border-radius: 50%;
+    border: 1px rgba(255, 255, 255, 0.5) solid;
+    color: $light_gray;
+    vertical-align: middle;
+    width: 42px;
+    height: 42px;
+    margin-left: 20px;
+    margin-right: 20px;
+    display: inline-block;
   }
 
-  @media only screen and (max-width: 470px) {
-    .thirdparty-button {
-      display: none;
-    }
+  .login-mode:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .login-svg-icon {
+    box-shadow: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    margin: 7px;
+    width: 26px;
+    height: 26px;
   }
 }
 </style>

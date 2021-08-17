@@ -71,7 +71,19 @@ router.beforeEach(async(to, from, next) => {
   }
 })
 
-router.afterEach(() => {
+router.afterEach(to => {
+  if (to.meta && to.meta.bgImage) {
+    console.log(to.meta.bgImage)
+    document.body.style.backgroundRepeat = 'no-repeat'
+    document.body.style.backgroundPosition = 'top right'
+    document.body.style.backgroundImage = `url(${to.meta.bgImage})`
+    document.body.style.backgroundSize = '100% 100%'
+  } else {
+    document.body.style.backgroundRepeat = ''
+    document.body.style.backgroundPosition = ''
+    document.body.style.backgroundImage = ''
+    document.body.style.backgroundSize = ''
+  }
   // finish progress bar
   NProgress.done()
 })

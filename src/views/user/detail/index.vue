@@ -192,7 +192,7 @@
 <script>
 import { Message } from 'element-ui'
 import { getToken } from '@/utils/auth'
-import { getUidByPhone, uploadAvatar } from '@/api/user'
+import { activationGetUid, uploadAvatar } from '@/api/user'
 // import js_sha256 from 'js-sha256'
 
 export default {
@@ -335,12 +335,12 @@ export default {
       this.$refs.activationForm.validateField('phone', errorMessage => {
         if (errorMessage) {
           Message({
-            message: 'errorMessage',
+            message: '请输入正确的手机号码',
             type: 'error',
             duration: 5 * 1000
           })
         } else {
-          getUidByPhone({ phone: currentForm.phone })
+          activationGetUid({ phone: currentForm.phone })
             .then(response => {
               currentForm.uid = response.data.uid
               console.log(this.activationForm.uid)

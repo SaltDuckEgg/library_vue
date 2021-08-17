@@ -60,7 +60,6 @@ import topbook from '@/views/mainScreen/editor/TopBook'
 import topacademy from '@/views/mainScreen/editor/TopAcademy'
 import topstudent from '@/views/mainScreen/editor/TopStudent'
 
-
 export default {
   name: 'DashboardEditor',
   components: { PanThumb, GithubCorner, chart, tempreatrue, topbook, topacademy, topstudent },

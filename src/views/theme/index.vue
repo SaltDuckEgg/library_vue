@@ -94,7 +94,7 @@ export default {
   },
   watch: {
     theme() {
-      toggleClass(document.body, 'custom-theme')
+      // toggleClass(document.body, 'custom-theme')
     }
   }
 }

@@ -271,7 +271,8 @@
           <el-col :span="13">
             <el-row>
               <el-col :span="12">
-                <img height="200px" width="200px" :src="pic_baseUrl+temp.title+'.jpg'" />
+                <!-- <img height="200px" width="200px" :src="pic_baseUrl+temp.title+'.jpg'" /> -->
+                <img height="200px" width="200px" :src="pic_baseUrl+temp.pic" />
               </el-col>
               <el-col :span="12">
                 <el-row>

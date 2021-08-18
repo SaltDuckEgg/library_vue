@@ -45,7 +45,7 @@ export default {
             value: 30 + Math.random() * 20
           })
         }
-        console.log(this.data)
+        // console.log(this.data)
         this.option = {
           textStyle: {
             fontSize: 16

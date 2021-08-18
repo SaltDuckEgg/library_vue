@@ -83,7 +83,7 @@ export default {
             children: []
           }]
         var category_list = []
-        response.data.res.forEach(function(item) {
+        response.data.res.forEach(function (item) {
           if (item.bookinfo.category in category_list) {
             category_list[item.bookinfo.category].push({
               title: item.bookinfo.title,
@@ -141,7 +141,7 @@ export default {
           // })
         }
         var data = res
-        console.log(res)
+        // console.log(res)
         for (var j = 0; j < data.length; ++j) {
           var level1 = data[j].children
           for (var i = 0; i < level1.length; ++i) {
@@ -149,7 +149,7 @@ export default {
             var bookScore = []
             var bookScoreId
             for (var star = 0; star < block.length; ++star) {
-              var style = (function(name) {
+              var style = (function (name) {
                 switch (name) {
                   case '3☆':
                     bookScoreId = 0
@@ -181,7 +181,7 @@ export default {
                   opacity: 1,
                   color: style.color
                 }
-                block[star].children.forEach(function(book) {
+                block[star].children.forEach(function (book) {
                   book.value = 1
                   book.itemStyle = style
 
@@ -219,7 +219,7 @@ export default {
             type: 'sunburst',
             center: ['50%', '50%'],
             data: data,
-            sort: function(a, b) {
+            sort: function (a, b) {
               if (a.depth === 1) {
                 return b.getValue() - a.getValue()
               } else {

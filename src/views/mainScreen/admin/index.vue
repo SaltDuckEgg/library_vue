@@ -1,9 +1,12 @@
 <template>
   <div class="dashboard-editor-container">
     <github-corner class="github-corner" />
-
     <panel-group @handleSetLineChartData="handleSetLineChartData" />
 
+    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+      <!-- <line-chart :chart-data="lineChartData" /> -->
+      <temperandHumi />
+    </el-row>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <!-- <line-chart :chart-data="lineChartData" /> -->
       <imageplayer />
@@ -102,6 +105,7 @@ import topbook from './components/TopBook'
 import topacademy from './components/TopAcademy'
 import topstudent from './components/TopStudent'
 import imageplayer from './components/ImagePlayer'
+import temperandHumi from './components/TemperandHumi'
 const lineChartData = {
   // 借还书
   newVisitis: {
@@ -139,7 +143,8 @@ export default {
     topacademy,
     topbook,
     topstudent,
-    imageplayer
+    imageplayer,
+    temperandHumi
   },
   data() {
     return {

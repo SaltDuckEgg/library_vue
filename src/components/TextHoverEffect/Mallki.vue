@@ -15,7 +15,7 @@ export default {
     },
     text: {
       type: String,
-      default: 'vue-element-admin'
+      default: '苏州咸鸭蛋大队'
     }
   }
 }
@@ -27,7 +27,7 @@ export default {
 .link--mallki {
   font-weight: 800;
   color: #4dd9d5;
-  font-family: 'Dosis', sans-serif;
+  font-family: "Dosis", sans-serif;
   -webkit-transition: color 0.5s 0.25s;
   transition: color 0.5s 0.25s;
   overflow: hidden;
@@ -45,7 +45,7 @@ export default {
 }
 
 .link--mallki::before {
-  content: '';
+  content: "";
   width: 100%;
   height: 6px;
   margin: -3px 0 0 0;

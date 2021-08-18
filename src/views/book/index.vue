@@ -271,7 +271,8 @@
           <el-col :span="13">
             <el-row>
               <el-col :span="12">
-                <img height="200px" width="200px" :src="pic_baseUrl+temp.title+'.jpg'" />
+                <!-- <img height="200px" width="200px" :src="pic_baseUrl+temp.title+'.jpg'" /> -->
+                <img height="200px" width="200px" :src="pic_baseUrl+temp.pic" />
               </el-col>
               <el-col :span="12">
                 <el-row>
@@ -512,14 +513,14 @@ export default {
     }
   },
   computed: {
-    isAdmin: function() {
+    isAdmin: function () {
       if (this.$store.getters.roles[0] === 'administrator') {
         return true
       } else {
         return false
       }
     },
-    isActive: function() {
+    isActive: function () {
       if (this.$store.getters.roles[0] === 'inactive_user') {
         return false
       } else {
@@ -731,7 +732,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(async() => {
+      }).then(async () => {
         await this.deleteBook(row, index)
         await this.getList()
       })
@@ -785,11 +786,7 @@ export default {
     formatJson(filterVal) {
       // console.log('formatJson(filterVal)')
       return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
+        return v[j]
       }))
     },
     getSortClass(key) {

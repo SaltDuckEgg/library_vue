@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>学院入馆人数饼图</h1>
+    <h1>学院排名</h1>
     <!-- <p>{{ msg }}</p> -->
     <div class="bar_compon">
       <div :id="id" style="min-width:400px;min-height: 500px;" />
@@ -45,7 +45,7 @@ export default {
             value: 30 + Math.random() * 20
           })
         }
-        console.log(this.data)
+        // console.log(this.data)
         this.option = {
           textStyle: {
             fontSize: 16

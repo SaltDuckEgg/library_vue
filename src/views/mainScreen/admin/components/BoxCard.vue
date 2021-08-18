@@ -1,26 +1,31 @@
 <template>
-  <el-card class="box-card-component" style="margin-left:8px;">
+  <el-card class="box-card-component">
     <div slot="header" class="box-card-header">
-      <img src="https://wpimg.wallstcn.com/e7d23d71-cf19-4b90-a1cc-f56af8c0903d.png">
+      <!-- <img src="https://wpimg.wallstcn.com/e7d23d71-cf19-4b90-a1cc-f56af8c0903d.png" /> -->
+      <img src="http://124.71.225.17:8000/media/floor/card_bg.jpg" />
     </div>
     <div style="position:relative;">
       <pan-thumb :image="avatar" class="panThumb" />
-      <mallki class-name="mallki-text" text="vue-element-admin" />
+      <mallki class-name="mallki-text" text="苏州咸鸭蛋大队" />
       <div style="padding-top:35px;" class="progress-item">
-        <span>Vue</span>
-        <el-progress :percentage="70" />
+        <span>2021年8月2日</span>
+        <el-progress :percentage="10" :stroke-width="26" />
       </div>
       <div class="progress-item">
-        <span>JavaScript</span>
-        <el-progress :percentage="18" />
+        <span>2021年8月7日</span>
+        <el-progress :percentage="35" :stroke-width="26" />
       </div>
       <div class="progress-item">
-        <span>CSS</span>
-        <el-progress :percentage="12" />
+        <span>2021年8月13日</span>
+        <el-progress :percentage="50" :stroke-width="26" />
       </div>
       <div class="progress-item">
-        <span>ESLint</span>
-        <el-progress :percentage="100" status="success" />
+        <span>2021年8月18日</span>
+        <el-progress :percentage="80" :stroke-width="26" stroke-linecap="square" />
+      </div>
+      <div class="progress-item">
+        <span>2021年8月22日</span>
+        <el-progress :percentage="100" status="success" :stroke-width="26" />
       </div>
     </div>
   </el-card>
@@ -62,9 +67,9 @@ export default {
 </script>
 
 <style lang="scss" >
-.box-card-component{
+.box-card-component {
   .el-card__header {
-    padding: 0px!important;
+    padding: 0px !important;
   }
 }
 </style>
@@ -92,25 +97,25 @@ export default {
   }
   .panThumb {
     z-index: 100;
-    height: 70px!important;
-    width: 70px!important;
-    position: absolute!important;
+    height: 70px !important;
+    width: 70px !important;
+    position: absolute !important;
     top: -45px;
     left: 0px;
     border: 5px solid #ffffff;
     background-color: #fff;
     margin: auto;
-    box-shadow: none!important;
+    box-shadow: none !important;
     ::v-deep .pan-info {
-      box-shadow: none!important;
+      box-shadow: none !important;
     }
   }
   .progress-item {
     margin-bottom: 10px;
     font-size: 14px;
   }
-  @media only screen and (max-width: 1510px){
-    .mallki-text{
+  @media only screen and (max-width: 1510px) {
+    .mallki-text {
       display: none;
     }
   }

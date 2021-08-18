@@ -1,5 +1,8 @@
 <template>
-  <div :id="id" style="min-width:800px;min-height: 400px;" />
+  <div>
+    <h1>温湿度</h1>
+    <div :id="id" style="min-width:800px;min-height: 400px;" />
+  </div>
 </template>
 
 <script>
@@ -36,14 +39,14 @@ export default {
 
       client: Stomp.client(MQ_SERVICE),
       values: {
-        time: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-        temper: [25, 35, 25, 35, 25, 35, 25],
-        humi: [40, 50, 40, 50, 40, 50, 40]
+        time: ['周一', '周二', '周三', '周四', '周五', '周六', '周日', '周二', '周三', '周四'],
+        temper: [25, 35, 25, 35, 25, 35, 25, 25, 35, 25],
+        humi: [40, 50, 40, 50, 40, 50, 40, 40, 50, 40]
       },
       option: {
         color: ['#80FFA5', '#00DDFF', '#37A2FF', '#FF0087', '#FFBF00'],
         title: {
-          text: '渐变堆叠面积图'
+          // text: '渐变堆叠面积图'
         },
         tooltip: {
           trigger: 'axis',
@@ -63,16 +66,20 @@ export default {
           }
         },
         grid: {
+          // x: 25,
+          // y: 25,
+          // x2: 45,
+          // y2: 45,
           left: '3%',
           right: '4%',
-          bottom: '3%',
+          bottom: '1%',
           containLabel: true
         },
         xAxis: [
           {
             type: 'category',
             boundaryGap: false,
-            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日', '周二', '周三', '周四']
             // data: this.values.time
           }
         ],
@@ -104,7 +111,7 @@ export default {
             emphasis: {
               focus: 'series'
             },
-            data: [140, 232, 101, 264, 90, 340, 250]
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
           },
           {
@@ -133,7 +140,7 @@ export default {
             emphasis: {
               focus: 'series'
             },
-            data: [220, 302, 181, 234, 210, 290, 150]
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           }
         ]
       }
@@ -161,7 +168,7 @@ export default {
       console.log('Failed: ' + frame)
     },
     responseCallback: function (frame) {
-      // console.log('+++++++++++++++++++++++++responseCallback msg=>' + frame.body)
+      console.log('responseCallback msg=>' + frame.body)
       // console.log('------')
       var obj = JSON.parse(frame.body)
       var time = 'default'
@@ -186,7 +193,6 @@ export default {
       this.option.series[0].data = this.values.temper
       this.option.series[1].data = this.values.humi
       this.option.xAxis[0].data = this.values.time
-
       this.Draw()
     },
     connect: function () {

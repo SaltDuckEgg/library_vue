@@ -1,15 +1,73 @@
 <template>
   <div class="dashboard-editor-container">
     <github-corner class="github-corner" />
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
 
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <!-- <line-chart :chart-data="lineChartData" /> -->
+    <panel-group @handleSetLineChartData="handleSetLineChartData" />
+    <el-row display="flex" flex-wrap="wrap" :gutter="8" style="margin-bottom:50px;">
+      <!-- 进度条 -->
+
+      <el-col
+        :xs="{span: 24}"
+        :sm="{span: 12}"
+        :md="{span: 12}"
+        :lg="{span: 6}"
+        :xl="{span: 6}"
+        style="padding-right:32px;margin-right:120px;"
+      >
+        <box-card />
+      </el-col>
+
+      <el-col :xs="{span: 96}" :sm="{span: 48}" :md="{span: 48}" :lg="{span: 16}" :xl="{span: 12}">
+        <imageplayer />
+      </el-col>
+    </el-row>
+    <el-row style="margin-bottom:100px;">
       <temperandHumi />
     </el-row>
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <!-- <line-chart :chart-data="lineChartData" /> -->
-      <imageplayer />
+
+    <el-row :gutter="1" style="margin-bottom:50px">
+      <el-col :xs="4" :sm="6" :lg="8" :span="12">
+        <div>
+          <topstudent />
+        </div>
+      </el-col>
+
+      <!-- 热书榜 -->
+      <el-col
+        :xs="{span: 36}"
+        :sm="{span: 18}"
+        :md="{span: 18}"
+        :lg="{span: 9}"
+        :xl="{span: 9}"
+        style="padding-right:8px;"
+      >
+        <!-- style="background:#fff;padding-right:8px;margin-bottom:30px;" -->
+
+        <!-- <transaction-table /> -->
+        <topbook />
+      </el-col>
+      <!-- 学院入馆top -->
+      <el-col
+        :xs="{span: 24}"
+        :sm="{span: 12}"
+        :md="{span: 12}"
+        :lg="{span: 3}"
+        :xl="{span: 6}"
+        style="padding-right:8px;"
+      >
+        <!-- <todo-list /> -->
+        <topacademy id="topacademy" />
+        <!-- <topstudent /> -->
+      </el-col>
+    </el-row>
+    <!-- <el-row :gutter="32">
+      <div>
+        <imageplayer />
+      </div>
+    </el-row>-->
+
+    <el-row :gutter="32">
+      <document />
     </el-row>
 
     <el-row :gutter="32">
@@ -31,61 +89,6 @@
         </div>
       </el-col>-->
     </el-row>
-
-    <el-row :gutter="32">
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <!-- <raddar-chart /> -->
-          <!-- <topacademy /> -->
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <!-- <pie-chart /> -->
-          <tempreatrue id="tempreature" />
-
-          <!-- <topbook id="topBook" /> -->
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <!-- <bar-chart /> -->
-        </div>
-      </el-col>
-    </el-row>
-
-    <el-row :gutter="8">
-      <el-col
-        :xs="{span: 24}"
-        :sm="{span: 24}"
-        :md="{span: 24}"
-        :lg="{span: 12}"
-        :xl="{span: 12}"
-        style="padding-right:8px;margin-bottom:30px;"
-      >
-        <transaction-table />
-      </el-col>
-      <el-col
-        :xs="{span: 24}"
-        :sm="{span: 12}"
-        :md="{span: 12}"
-        :lg="{span: 6}"
-        :xl="{span: 6}"
-        style="margin-bottom:30px;"
-      >
-        <todo-list />
-      </el-col>
-      <el-col
-        :xs="{span: 24}"
-        :sm="{span: 12}"
-        :md="{span: 12}"
-        :lg="{span: 6}"
-        :xl="{span: 6}"
-        style="margin-bottom:30px;"
-      >
-        <box-card />
-      </el-col>
-    </el-row>
   </div>
 </template>
 
@@ -106,6 +109,7 @@ import topacademy from './components/TopAcademy'
 import topstudent from './components/TopStudent'
 import imageplayer from './components/ImagePlayer'
 import temperandHumi from './components/TemperandHumi'
+import document from './components/Document';
 const lineChartData = {
   // 借还书
   newVisitis: {
@@ -144,7 +148,8 @@ export default {
     topbook,
     topstudent,
     imageplayer,
-    temperandHumi
+    temperandHumi,
+    document
   },
   data() {
     return {
@@ -161,8 +166,14 @@ export default {
 
 <style lang="scss" scoped>
 .dashboard-editor-container {
+  // background: url("~@/assets/login_bg/library_img.jpeg");
+  height: 100%; //大小设置为100%
+  position: fixed;
+  background-size: 100% 100%;
   padding: 32px;
-  background-color: rgb(240, 242, 245);
+  // background-color: rgb(240, 242, 245);
+  background-color: rgba(233, 232, 182, 0.096);
+
   position: relative;
 
   .github-corner {

@@ -3,7 +3,7 @@
     <h1>学生入馆次数top</h1>
     <!-- <p>{{ msg }}</p> -->
     <div class="bar_compon">
-      <div :id="id" style="min-width:400px;min-height: 500px;" />
+      <div :id="id" style="min-width:350px;min-height: 400px;" />
     </div>
   </div>
 </template>

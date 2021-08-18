@@ -17,7 +17,6 @@ import {
   CanvasRenderer
 } from 'echarts/renderers'
 import { getTopBookWeek } from '@/api/book'
-import { defaults } from 'codemirror'
 
 echarts.use(
   [SunburstChart, CanvasRenderer]
@@ -213,7 +212,7 @@ export default {
         }
 
         var option = {
-          backgroundColor: bgColor,
+          // backgroundColor: bgColor,
           color: colors,
           series: [{
             type: 'sunburst',

@@ -163,7 +163,6 @@
     <el-dialog title="修改用户信息" :visible.sync="dialogFormVisible">
       <el-form
         ref="dataForm"
-        :rules="rules"
         :model="temp"
         label-position="left"
         label-width="80px"
@@ -174,8 +173,8 @@
           <el-input v-model="temp.name" autocomplete="off" disabled />
         </el-form-item>
         <el-form-item label="性别" :label-width="formLabelWidth">
-          <el-radio v-model="temp.sex" label="男" disabled>男</el-radio>
-          <el-radio v-model="temp.sex" label="女" disabled>女</el-radio>
+          <el-radio v-model="temp.sex" label="男">男</el-radio>
+          <el-radio v-model="temp.sex" label="女">女</el-radio>
         </el-form-item>
         <el-form-item label="手机号码" :label-width="formLabelWidth" prop="phone">
           <el-input v-model="temp.phone" autocomplete="off" disabled />
@@ -184,10 +183,10 @@
           <el-input v-model="temp.email" autocomplete="off" disabled />
         </el-form-item>
         <el-form-item label="学院" :label-width="formLabelWidth">
-          <el-input v-model="temp.academy" autocomplete="off" disabled />
+          <el-input v-model="temp.academy" autocomplete="off" />
         </el-form-item>
         <el-form-item label="班级" :label-width="formLabelWidth">
-          <el-input v-model="temp.class_num" autocomplete="off" disabled />
+          <el-input v-model="temp.class_num" autocomplete="off" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -296,6 +295,7 @@ export default {
             duration: 5 * 1000
           })
           this.listQuery.page = 1
+          this.listLoading = false
           this.getList()
         })
     },

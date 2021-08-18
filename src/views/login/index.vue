@@ -67,7 +67,7 @@
       <el-form ref="phoneForm" class="login-form" label-position="left" :model="phoneForm" :rules="phoneRules">
         <el-form-item type="text" tabindex="1" prop="phone">
           <span class="svg-container">
-            <svg-icon icon-class="user" />
+            <svg-icon icon-class="phone" />
           </span>
           <el-input v-model="phoneForm.phone" placeholder="手机号码" autocomplete="off" />
         </el-form-item>
@@ -100,6 +100,9 @@
         </el-button>
       </el-form>
     </div>
+    <div v-if="loginMode===4" class="face-login">
+      <FaceLogin />
+    </div>
     <div class="switch-login">
       <span class="login-mode" @click="loginMode=1">
         <svg-icon icon-class="login-password" class="login-svg-icon" />
@@ -110,6 +113,9 @@
       <span class="login-mode" @click="loginMode=3">
         <svg-icon icon-class="login-smscode" class="login-svg-icon" />
       </span>
+      <span class="login-mode" @click="loginMode=4">
+        <svg-icon icon-class="login-face" class="login-svg-icon" />
+      </span>
     </div>
   </div>
 </template>
@@ -117,12 +123,13 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import QRLogin from '@/views/login/components/QRLogin'
+import FaceLogin from '@/views/login/components/face'
 import { Message } from 'element-ui'
 import { loginGetUid } from '@/api/user'
 
 export default {
   name: 'Login',
-  components: { QRLogin },
+  components: { QRLogin, FaceLogin },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
@@ -207,6 +214,7 @@ export default {
   },
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
+    this.close = true
   },
   methods: {
     checkCapslock(e) {

@@ -11,6 +11,7 @@
                 size="mini"
                 type="primary"
                 class="pull-right"
+                style="margin-left: 5px; margin-right: 5px"
                 @click="activationFormVisible = true"
               >
                 激活
@@ -20,9 +21,20 @@
                 size="mini"
                 type="primary"
                 class="pull-right"
+                style="margin-left: 5px; margin-right: 5px"
                 @click="passwordFormVisible = true"
               >
                 修改密码
+              </el-button>
+              <el-button
+                v-if="this.$store.getters.roles[0] === 'administrator'"
+                size="mini"
+                type="primary"
+                class="pull-right"
+                style="margin-left: 5px; margin-right: 5px"
+                @click="dialogVisible = true; close = false"
+              >
+                录入人脸
               </el-button>
             </div>
           </div>
@@ -185,6 +197,18 @@
           <el-button type="primary" :loading="loading" @click="modifyEmail">确 定</el-button>
         </div>
       </el-dialog>
+      <el-dialog
+        title="人脸照片录入"
+        :visible.sync="dialogVisible"
+        width="700px"
+        @close="close = true"
+      >
+        <Face :close="close" />
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false; close = true">取 消</el-button>
+          <el-button type="primary" @click="dialogVisible = false; close = true">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-row>
   </div>
 </template>
@@ -193,10 +217,13 @@
 import { Message } from 'element-ui'
 import { getToken } from '@/utils/auth'
 import { activationGetUid, uploadAvatar } from '@/api/user'
+import Face from './face'
+
 // import js_sha256 from 'js-sha256'
 
 export default {
   name: 'Detail',
+  components: { Face },
   data() {
     const validatePhone = (rule, value, callback) => {
       if (!(/^1[3-9]\d{9}$/.test(value))) {
@@ -260,6 +287,8 @@ export default {
       passwordFormVisible: false,
       phoneFormVisible: false,
       emailFormVisible: false,
+      dialogVisible: false,
+      close: false,
       loading: false,
       activationForm: {
         newPassword: '',
@@ -454,16 +483,16 @@ export default {
         const reader = new FileReader()
         reader.readAsDataURL(file)
         reader.onload = () => {
-          this.options.img = reader.result
+          // console.log('readerResult：', reader.result)
         }
       }
     },
     upLoad(file) {
       const formData = new FormData()
       formData.append('avatar', file.file)
-      console.log(file)
+      console.log('avatarFile：', file)
       uploadAvatar(formData).then(res => {
-        console.log(res)
+        // console.log('avatarResponse：', res)
         this.imageUrl = res.data.avatar
         Message({
           message: '头像上传成功！',

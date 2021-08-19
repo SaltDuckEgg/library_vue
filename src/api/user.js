@@ -34,7 +34,7 @@ export function uploadAvatar(data) {
 
 export function uploadUserImg(data) {
   return request({
-    headers: { 'Content-Type': 'multipart/form-data;' },
+    // headers: { 'Content-Type': 'multipart/form-data;' },
     url: 'http://124.71.225.17:8000/user/upload_face/',
     method: 'post',
     data: data
@@ -43,7 +43,7 @@ export function uploadUserImg(data) {
 
 export async function loginByFace(data) {
   return request({
-    headers: { 'Content-Type': 'multipart/form-data;' },
+    // headers: { 'Content-Type': 'multipart/form-data;' },
     url: 'http://124.71.225.17:8000/user/login_by_face/',
     method: 'post',
     data: data

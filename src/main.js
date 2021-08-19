@@ -8,6 +8,7 @@ import '@/styles/index.scss' // global css
 import App from './App.vue'
 import store from './store'
 import router from './router'
+import VueSSE from 'vue-sse'
 import './icons' // icon
 import './permission' // permission control
 import './utils/error-log' // error log
@@ -27,6 +28,10 @@ if (process.env.NODE_ENV === 'production') {
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium',
   locale: enLang // 如果使用中文，无需设置，请删除
+})
+Vue.use(VueSSE, {
+  polyfill: true,
+  url: 'http://124.71.225.17:8000/events/'
 })
 // register global utility filters
 Object.keys(filters).forEach(key => {

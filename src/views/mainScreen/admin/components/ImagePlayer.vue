@@ -1,7 +1,7 @@
 <template>
   <div class="demo-image__placeholder">
     <div class="block">
-      <h1>楼层示意图</h1>
+      <h1>楼层示意图:{{cur_floor+1}}L</h1>
       <el-image
         :src="'http://124.71.225.17:8000/media/floor/' + String(cur_floor+1) + 'L.png'"
         @click="oncall"

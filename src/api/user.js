@@ -139,11 +139,23 @@ export function deleteUser(id) {
 // ====================
 export function getTopAcademy() {
   // return request({
-  //   url: 'http://124.71.225.17:8000/user/academyRatio',
-  //   methos: 'get'
+  //   url: 'http://124.71.225.17:8000/user/academyRatio/',
+  //   method: 'get',
+  //   params: { opt: 'week' }
   // })
   return request({
-    url: 'http://124.71.225.17:8000/user/academy/',
-    method: 'get'
+    url: 'http://124.71.225.17:8000/user/academy',
+    methos: 'get'
+  })
+}
+
+export function getTopStudent() {
+  return request({
+    url: 'http://124.71.225.17:8000/user/ranking/',
+    method: 'get',
+    params: {
+      opt: 'week',
+      num: 8
+    }
   })
 }

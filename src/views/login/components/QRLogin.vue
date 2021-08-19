@@ -12,7 +12,7 @@
         <div v-if="scanned" class="qr-overlay">
           <div>
             <i class="el-icon-success" style="color: green" />
-            请在客户端点击确定
+            请点击确定
           </div>
         </div>
         <div v-if="expired" class="qr-overlay">
@@ -29,8 +29,10 @@
 <script>
 import { codeQuery, refreshCode } from '@/api/qrLogger'
 import QRCode from 'qrcode'
+import { Message } from 'element-ui'
 
 export default {
+  props: ['login-mode'],
   data() {
     return {
       updated: 0,
@@ -41,6 +43,7 @@ export default {
       expired: false,
       scanned: false,
       token: '',
+      roles: '',
       intv: 0
     }
   },
@@ -80,10 +83,22 @@ export default {
       }
       this.scanned = query.scanned
       this.token = query.token
+      this.roles = query.roles
       if (query.token) {
         this.$store.dispatch('user/loginViaToken', this.token)
           .then(() => {
-            this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+            console.log(this.roles)
+            if (this.roles === 'administrator') {
+              this.$emit('reverse')
+              Message({
+                message: '您正在以管理员身份登陆，请进行人脸核验',
+                type: 'warning',
+                duration: 5 * 1000
+              })
+              this.$store.dispatch('user/resetRoles')
+            } else {
+              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+            }
           })
           .catch(() => {
           })

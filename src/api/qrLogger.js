@@ -21,7 +21,8 @@ export async function codeQuery(uid) {
         expired: res.data.msg === '二维码已失效!',
         waiting: res.data.msg === '请等待客户端登录!',
         scanned: res.data.msg === '请等待客户端确认!',
-        token: res.data.token || undefined
+        token: res.data.token || undefined,
+        roles: res.data.roles || null
       })
     )
 }

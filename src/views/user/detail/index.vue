@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <el-col :span="16" :xs="24">
+      <el-col :span="22" :xs="24">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <div style="margin-bottom: 5px">
@@ -49,7 +49,7 @@
                 :before-upload="beforeAvatarUpload"
                 :disabled="this.$store.getters.roles[0] === 'inactive_user'"
               >
-                <img v-if="imageUrl" :src="imageUrl" class="avatar" alt="" style="width: 80px; height: 80px">
+                <img v-if="imageUrl" :src="imageUrl" class="avatar" alt="" style="width: 100px; height: 100px">
                 <i v-else class="el-icon-plus avatar-uploader-icon" />
               </el-upload>
             </div>

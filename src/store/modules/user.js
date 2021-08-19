@@ -70,12 +70,13 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: js_sha256.sha256(password) }).then(response => {
-        const token = response.data.token
+        const { roles, token } = response.data
+        commit('SET_ROLES', [roles])
         commit('SET_TOKEN', token)
         commit('SET_PASSWORD', js_sha256.sha256(password))
         setToken(token)
         setPassword(js_sha256.sha256(password))
-        resolve()
+        resolve(roles)
       }).catch(error => {
         reject(error)
       })
@@ -87,14 +88,19 @@ const actions = {
     setToken(token)
   },
 
+  resetRoles({ commit }) {
+    commit('SET_ROLES', [])
+  },
+
   loginByPhone({ commit }, userInfo) {
     const { uid, sms_code } = userInfo
     return new Promise((resolve, reject) => {
       loginByPhone({ uid: uid.trim(), sms_code: sms_code }).then(response => {
-        const token = response.data.token
+        const { roles, token } = response.data
+        commit('SET_ROLES', [roles])
         commit('SET_TOKEN', token)
         setToken(token)
-        resolve()
+        resolve(roles)
       }).catch(error => {
         reject(error)
       })

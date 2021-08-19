@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import axios from 'axios'
 
 export function login(data) {
   return request({
@@ -25,13 +24,35 @@ export function logout() {
 }
 
 export function uploadAvatar(data) {
-  axios.defaults.headers['Content-Type'] = 'multipart/form-data'
   return request({
     headers: { 'Content-Type': 'multipart/form-data' },
     url: 'http://124.71.225.17:8000/user/avatar/',
     method: 'post',
     data: data
   })
+}
+
+export function uploadUserImg(data) {
+  return request({
+    headers: { 'Content-Type': 'multipart/form-data;' },
+    url: 'http://124.71.225.17:8000/user/upload_face/',
+    method: 'post',
+    data: data
+  })
+}
+
+export async function loginByFace(data) {
+  return request({
+    headers: { 'Content-Type': 'multipart/form-data;' },
+    url: 'http://124.71.225.17:8000/user/login_by_face/',
+    method: 'post',
+    data: data
+  })
+    .then((res) =>
+      ({
+        token: res.data.token || undefined
+      })
+    )
 }
 
 export function addSaveFile(data) {

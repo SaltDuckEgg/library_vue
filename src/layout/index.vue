@@ -20,6 +20,8 @@ import RightPanel from '@/components/RightPanel'
 import { AppMain, Navbar, Settings, Sidebar, TagsView } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 import { mapState } from 'vuex'
+import { Message } from 'element-ui'
+let sseClient
 
 export default {
   name: 'Layout',
@@ -49,9 +51,39 @@ export default {
       }
     }
   },
+  mounted() {
+    sseClient = this.$sse.create({
+      url: 'http://124.71.225.17:8000/events/'
+    })
+    console.log('已创建')
+    sseClient.on('message', this.showMessage)
+    sseClient.connect()
+      .then(sse => {
+        console.log('已连接到后端SSE！')
+      })
+      .catch((err) => {
+        console.error('无法连接到后端SSE！', err)
+      })
+  },
+  beforeDestroy() {
+    sseClient.disconnect()
+  },
   methods: {
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
+    },
+    showMessage(message) {
+      const str = JSON.parse(message)
+      const jsonObj = JSON.parse(str)
+      const username = jsonObj.username
+      if (username === this.$store.getters.username || this.$store.getters.roles === 'administrator') {
+        const inOut = jsonObj.type ? '入馆' : '出馆'
+        Message({
+          message: '学号为' + username + '的学生已' + inOut,
+          type: 'success',
+          duration: 5 * 1000
+        })
+      }
     }
   }
 }

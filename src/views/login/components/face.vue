@@ -2,8 +2,8 @@
   <div style="text-align: center">
     <!--视频流展示-->
     <video ref="video" width="264" height="198" autoplay />
-    <!--canvas截取流并展示照片-->
-    <canvas ref="canvas" width="160" height="120" style="position:fixed;left:100%" />
+    <!--canvas截取流并展示照片 width:160px;height:120px;position:fixed;left:100%-->
+    <canvas ref="canvas" style="display: none" />
   </div>
 </template>
 
@@ -17,8 +17,7 @@ export default {
     return {
       userImgFile: undefined,
       intv: 0,
-      token: '',
-      formData: undefined
+      token: ''
     }
   },
   created() {
@@ -55,50 +54,53 @@ export default {
         this.$refs['video'].play()
       }).catch(error => {
         console.log(error)
-        console.error('摄像头开启失败，请检查摄像头是否可用！')
+        Message({
+          message: '摄像头开启失败，请检查摄像头是否可用！',
+          type: 'error',
+          duration: 5 * 1000
+        })
       })
     },
     async refresh() {
-      this.intv = setInterval(() => this.loop(), 2000)
+      this.intv = setInterval(() => this.loop(), 1000)
       this.loop()
     },
     async loop() {
-      const formData = this.upload()
-      console.log('formData:')
-      console.log(formData)
-      const query = await loginByFace(formData)
-      this.token = query.token
-      if (query.token) {
-        this.$store.dispatch('user/loginViaToken', this.token)
-          .then(() => {
-            this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-          })
-          .catch(() => {
-          })
-      }
-    },
-    upload() {
-      const ctx = this.$refs['canvas'].getContext('2d')
-      // 缩放图片大小，但不改变图片像素
-      // 把当前视频帧内容渲染到canvas上
-      ctx.drawImage(this.$refs['video'], 0, 0, 640, 480)
-      // 图片转file
-      return new Promise(resolve => {
+      new Promise((resolve, reject) => {
+        const ctx = this.$refs['canvas'].getContext('2d')
+        ctx.drawImage(this.$refs['video'], 0, 0, 160, 120)
         this.$refs['canvas'].toBlob(function(blob) {
-          console.log(blob)
-          resolve(blob)
+          const formData = new FormData()
+          formData.append('login_img', new window.File([blob], 'login.jpg'))
+          if (formData.get('login_img').size < 10000) {
+            reject()
+          }
+          resolve(formData)
         })
-      }).then((blob) => {
-        this.userImgFile = new window.File([blob], 'login.jpg')
-        const formData = new FormData()
-        formData.append('login_img', this.userImgFile)
-        this.formData = formData
-        console.log('ori_img', this.userImgFile)
-        console.log('正在拍照上传')
-        return formData
+      }).then(async(formData) => {
+        console.log('formData:')
+        console.log(formData.get('login_img'))
+        const query = await loginByFace(formData)
+        return query.token
+      }).then(token => {
+        if (token) {
+          Message({
+            message: '人脸核验成功！',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          this.$store.dispatch('user/loginViaToken', token)
+            .then(() => {
+              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+            })
+            .catch(error => {
+              console.log(error)
+            })
+        }
+      }).catch(error => {
+        console.log(error)
       })
     },
-    // 关闭摄像头
     closeCamera() {
       if (!this.$refs['video'].srcObject) {
         this.dialogCamera = false

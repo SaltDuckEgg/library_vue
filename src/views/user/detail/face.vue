@@ -83,23 +83,23 @@ export default {
     },
     upload() {
       const formData = new FormData()
-      // formData.append('ori_img', this.userImgFile)
-      formData.append('login_img', this.userImgFile)
-      // uploadUserImg(formData).then(res => {
-      //   Message({
-      //     message: '照片上传成功！',
-      //     type: 'success',
-      //     duration: 5 * 1000
-      //   })
-      // })
-      loginByFace(formData).then(res => {
-        console.log(res)
+      formData.append('ori_img', this.userImgFile)
+      uploadUserImg(formData).then(res => {
         Message({
           message: '照片上传成功！',
           type: 'success',
           duration: 5 * 1000
         })
       })
+      // formData.append('login_img', this.userImgFile)
+      // loginByFace(formData).then(res => {
+      //   console.log(res)
+      //   Message({
+      //     message: '照片上传成功！',
+      //     type: 'success',
+      //     duration: 5 * 1000
+      //   })
+      // })
     },
     // 关闭摄像头
     closeCamera() {

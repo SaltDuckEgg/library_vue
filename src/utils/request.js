@@ -68,6 +68,8 @@ service.interceptors.response.use(res => {
     ).then(() => {
       location.href = '/index'
     })
+  } else if (code === 600) {
+    console.log(msg)
   } else if (code === 403) {
     Message({
       message: msg,

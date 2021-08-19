@@ -267,48 +267,45 @@
       >
         <!-- size="mini" -->
 
-        <el-row :gutter="20">
-          <el-col :span="13">
-            <el-row>
-              <el-col :span="12">
-                <!-- <img height="200px" width="200px" :src="pic_baseUrl+temp.title+'.jpg'" /> -->
-                <img height="200px" width="200px" :src="pic_baseUrl+temp.pic" />
-              </el-col>
-              <el-col :span="12">
-                <el-row>
-                  <el-form-item label="书名" prop="title">
-                    <el-input
-                      v-model="temp.title"
-                      :disabled="!isActive"
-                      @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
-                      @keyup.esc.native="dialogFormVisible = false"
-                    />
-                  </el-form-item>
-                </el-row>
-                <el-row>
-                  <el-form-item label="作者">
-                    <el-input
-                      v-model="temp.author"
-                      :disabled="!isActive"
-                      @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
-                      @keyup.esc.native="dialogFormVisible = false"
-                    />
-                  </el-form-item>
-                </el-row>
-                <el-row>
-                  <el-form-item label="分类号">
-                    <el-input
-                      v-model="temp.clsify_num"
-                      :disabled="!isActive"
-                      @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
-                      @keyup.esc.native="dialogFormVisible = false"
-                    />
-                  </el-form-item>
-                </el-row>
-              </el-col>
-            </el-row>
+        <el-row :gutter="15">
+          <el-col
+            :xs="{span: 24}"
+            :sm="{span: 12}"
+            :md="{span: 12}"
+            :lg="{span: 6}"
+            :xl="{span: 6}"
+          >
+            <img height="200px" width="200px" :src="pic_baseUrl+temp.title+'.jpg'" />
+          </el-col>
 
-            <!-- <el-row>
+          <el-col
+            :xs="{span: 24}"
+            :sm="{span: 12}"
+            :md="{span: 12}"
+            :lg="{span: 6}"
+            :xl="{span: 6}"
+          >
+            <el-row>
+              <el-form-item label="书名" prop="title">
+                <el-input
+                  v-model="temp.title"
+                  :disabled="!isActive"
+                  @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+                  @keyup.esc.native="dialogFormVisible = false"
+                />
+              </el-form-item>
+            </el-row>
+            <el-row>
+              <el-form-item label="作者">
+                <el-input
+                  v-model="temp.author"
+                  :disabled="!isActive"
+                  @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+                  @keyup.esc.native="dialogFormVisible = false"
+                />
+              </el-form-item>
+            </el-row>
+            <el-row>
               <el-form-item label="分类号">
                 <el-input
                   v-model="temp.clsify_num"
@@ -317,9 +314,16 @@
                   @keyup.esc.native="dialogFormVisible = false"
                 />
               </el-form-item>
-            </el-row>-->
+            </el-row>
           </el-col>
-          <el-col :span="7">
+
+          <el-col
+            :xs="{span: 24}"
+            :sm="{span: 12}"
+            :md="{span: 12}"
+            :lg="{span: 6}"
+            :xl="{span: 6}"
+          >
             <el-row>
               <el-form-item label="类别" prop="title">
                 <el-select
@@ -332,7 +336,6 @@
                 </el-select>
               </el-form-item>
             </el-row>
-
             <el-row>
               <el-form-item label="出版社">
                 <el-input
@@ -355,36 +358,65 @@
             </el-row>
           </el-col>
         </el-row>
+
         <el-row>
-          <el-form-item label="关键词">
-            <el-input
-              v-model="temp.kw"
-              :disabled="!isActive"
-              type="textarea"
-              :autosize="{ minRows: 2, maxRows: 4}"
-              @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
-              @keyup.esc.native="dialogFormVisible = false"
-            />
-          </el-form-item>
+          <el-col
+            :xs="{span: 72}"
+            :sm="{span: 36}"
+            :md="{span: 36}"
+            :lg="{span: 18}"
+            :xl="{span: 18}"
+          >
+            <el-form-item label="关键词">
+              <el-input
+                v-model="temp.kw"
+                :disabled="!isActive"
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 4}"
+                @keyup.enter.native="dialogStatus==='create'?createData():updateData()"
+                @keyup.esc.native="dialogFormVisible = false"
+              />
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-row>
-          <el-form-item label="简介">
-            <el-input
-              v-model="temp.summary"
-              :disabled="!isActive"
-              :autosize="{ minRows: 3, maxRows: 15}"
-              type="textarea"
-              placeholder="Please input"
-            />
-          </el-form-item>
+          <el-col
+            :xs="{span: 72}"
+            :sm="{span: 36}"
+            :md="{span: 36}"
+            :lg="{span: 18}"
+            :xl="{span: 18}"
+          >
+            <el-form-item label="简介">
+              <el-input
+                v-model="temp.summary"
+                :disabled="!isActive"
+                :autosize="{ minRows: 3, maxRows: 15}"
+                type="textarea"
+                placeholder="Please input"
+              />
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-row :gutter="50">
-          <el-col :span="10">
+          <el-col
+            :xs="{span: 24}"
+            :sm="{span: 12}"
+            :md="{span: 12}"
+            :lg="{span: 6}"
+            :xl="{span: 6}"
+          >
             <el-form-item label="总数" prop="title">
               <el-input v-model="temp.pageviews" :disabled="!isActive" />
             </el-form-item>
           </el-col>
-          <el-col :span="10">
+          <el-col
+            :xs="{span: 24}"
+            :sm="{span: 12}"
+            :md="{span: 12}"
+            :lg="{span: 6}"
+            :xl="{span: 6}"
+          >
             <el-form-item label="库存" prop="title">
               <el-input v-model="temp.total_pageviews" :disabled="!isActive" />
             </el-form-item>
@@ -417,8 +449,6 @@
 <script>
 import { ffetchList, dataTranFormer, ffetchList_fuzzy, updateBook, deleteBook, createBook, getBookDetail } from '@/api/book'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
-// import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import Pagination from '@/views/book/components/Pagination' // secondary package based on el-pagination
 
 const calendarTypeOptions = [
@@ -456,9 +486,6 @@ export default {
   data() {
     return {
       pic_baseUrl: 'http://124.71.225.17:8000/media/cover/',
-      restaurants: [{ 'value': '三全鲜食（北新泾店）' }, { 'value': '长宁区新渔路144号' }],
-      // restaurants: this.a(),
-
       tableKey: 0,
       list: null,
       total: 0,
@@ -471,7 +498,7 @@ export default {
         // importance: undefined,
         title: undefined,
         type: undefined,
-        page_size: 20,
+        page_size: 50,
         page: 1,
         sort: '+id'
         // sort: '+id'

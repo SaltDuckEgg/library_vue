@@ -52,7 +52,7 @@ export default {
       this.chartDom = document.getElementById(this.id)
       this.myChart = echarts.init(this.chartDom)
 
-      var colors = ['#283D3B', '#197278', '#C44536', '#EDDDD4', '#772E25']
+      var colors = ['#FF4500', '#CD5C5C', '#778899', '#E0EEEE', '#283D3B']
       var bgColor = '#FFFFFF'
 
       var itemStyle = {
@@ -72,13 +72,13 @@ export default {
       getTopBookWeek().then(response => {
         var res = [
           {
-            name: '第一部分',
-            itemStyle: { color: '#64B6AC' },
+            name: '热门',
+            itemStyle: { color: '#EECBAD' },
             children: []
           },
           {
-            name: '第二部分',
-            itemStyle: { color: '#98C9A3' },
+            name: '图书',
+            itemStyle: { color: '#EECFA1' },
             children: []
           }]
         var category_list = []

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>学院排名</h1>
+    <h1>学院入馆次数排名</h1>
     <!-- <p>{{ msg }}</p> -->
     <div class="bar_compon">
       <div :id="id" style="min-width:400px;min-height: 500px;" />
@@ -51,7 +51,7 @@ export default {
             fontSize: 16
           },
           title: {
-            text: '这是个title',
+            // text: '这是个title',
             left: 'center',
             textStyle: {
               color: '#999',

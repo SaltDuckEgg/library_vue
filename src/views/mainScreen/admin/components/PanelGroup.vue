@@ -10,7 +10,7 @@
             <!-- New Visits -->
             用户数量
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="user_num" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -21,7 +21,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">不知道写啥好</div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="0" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -32,7 +32,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">藏书数量</div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="book_num" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -43,7 +43,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">借出数量</div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="32" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -52,6 +52,8 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import { ffetchList } from '@/api/book'
+import { fetchList } from '@/api/user'
 
 export default {
   components: {
@@ -59,12 +61,26 @@ export default {
   },
   data() {
     return {
-      user_num: 0
+      user_num: 0,
+      book_num: 0
     }
+  },
+  created() {
+    this.getData()
   },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
+    },
+    getData() {
+      ffetchList().then(response => {
+        console.log(response)
+        this.book_num = response.data.count
+      })
+      fetchList().then(response => {
+        console.log(response)
+        this.user_num = response.data.count
+      })
     }
   }
 }

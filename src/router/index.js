@@ -104,7 +104,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        meta: { title: '用户看板', icon: 'dashboard', affix: true }
       }
     ]
   }
@@ -119,9 +119,6 @@ export const asyncRoutes = [
   userRouter,
 
   /** when your routing map is too long, you can split it into small modules **/
-
-
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

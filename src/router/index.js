@@ -46,7 +46,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/mainScreen/index'),
         name: 'Book',
-        meta: { title: 'mainScreen', icon: 'mainScreen', noCache: true }
+        meta: { title: '主屏幕', icon: 'mainScreen', noCache: true }
       }
     ]
   },
@@ -58,7 +58,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/book/index'),
         name: 'Book',
-        meta: { title: 'Book', icon: 'book', noCache: true }
+        meta: { title: '图书信息', icon: 'book', noCache: true }
       }
     ]
   },

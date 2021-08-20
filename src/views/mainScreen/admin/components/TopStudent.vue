@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>学生入馆次数top</h1>
+    <h1>学生入馆时间排名</h1>
     <!-- <p>{{ msg }}</p> -->
     <div class="bar_compon">
       <div :id="id" style="min-width:350px;min-height: 400px;" />
@@ -54,7 +54,7 @@ export default {
         var timestep = 0
         var top = 0
         arr.forEach(person => {
-          var total_sec = person.time
+          var total_sec = person.time / 3600
           // var total_sec = 3600 + Math.random() * 600 * (8 - timestep)
           if (timestep == 0) {
             top = total_sec
@@ -83,8 +83,8 @@ export default {
             // ]
           },
           grid: { containLabel: true },
-          xAxis: { name: 'time' },
-          yAxis: { type: 'category', name: 'name' },
+          xAxis: { name: '小时' },
+          yAxis: { type: 'category', name: '姓名' },
           visualMap: {
             orient: 'horizontal',
             left: 'center',

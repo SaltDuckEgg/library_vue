@@ -44,7 +44,7 @@ export default {
         humi: [40, 50, 40, 50, 40, 50, 40, 40, 50, 40]
       },
       option: {
-        color: ['#80FFA5', '#00DDFF', '#37A2FF', '#FF0087', '#FFBF00'],
+        color: ['#00DDFF', '#FFBF00'],
         title: {
           // text: '渐变堆叠面积图'
         },
@@ -58,7 +58,7 @@ export default {
           }
         },
         legend: {
-          data: ['Line 1', 'Line 2']
+          data: ['温度', '湿度']
         },
         toolbox: {
           feature: {
@@ -85,24 +85,26 @@ export default {
         ],
         yAxis: [
           {
-            type: 'value'
+            type: 'value',
+            min: 0,
+            max: Math.max(this.temper, this.humi) + 10
           }
         ],
         series: [
           {
-            name: 'Line 1',
+            name: '湿度',
             type: 'line',
             stack: '总量',
             smooth: true,
             lineStyle: {
               width: 0
             },
-            showSymbol: false,
+            showSymbol: true,
             areaStyle: {
-              opacity: 0.8,
+              opacity: 0.5,
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
                 offset: 0,
-                color: 'rgba(128, 255, 165)'
+                color: 'rgba(128, 0, 165)'
               }, {
                 offset: 1,
                 color: 'rgba(1, 191, 236)'
@@ -111,24 +113,28 @@ export default {
             emphasis: {
               focus: 'series'
             },
+            label: {
+              show: true,
+              position: 'top'
+            },
             data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
           },
           {
-            name: 'Line 2',
+            name: '温度',
             type: 'line',
             stack: '总量',
             smooth: true,
             lineStyle: {
-              width: 0
+              width: 3
             },
-            showSymbol: false,
+            // showSymbol: true,
             label: {
               show: true,
               position: 'top'
             },
             areaStyle: {
-              opacity: 0.8,
+              opacity: 0.3,
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
                 offset: 0,
                 color: 'rgba(255, 191, 0)'

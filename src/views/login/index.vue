@@ -238,19 +238,22 @@ export default {
           this.$store.dispatch('user/login', this.loginForm)
             .then((roles) => {
               // console.log('roles', roles)
-              if (this.$store.getters.roles[0] === 'administrator') {
-                this.loginMode = 4
-                Message({
-                  message: '您正在以管理员身份登陆，请进行人脸核验',
-                  type: 'warning',
-                  duration: 5 * 1000
-                })
-                this.$store.dispatch('user/resetRoles')
-                this.loading = false
-              } else {
-                this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-                this.loading = false
-              }
+              // if (this.$store.getters.roles[0] === 'administrator') {
+              //   this.loginMode = 4
+              //   Message({
+              //     message: '您正在以管理员身份登陆，请进行人脸核验',
+              //     type: 'warning',
+              //     duration: 5 * 1000
+              //   })
+              //   this.$store.dispatch('user/resetRoles')
+              //   this.loading = false
+              // } else {
+              //   this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+              //   this.loading = false
+              // }
+              this.$store.dispatch('user/resetRoles')
+              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+              this.loading = false
             })
             .catch(() => {
               this.loading = false
@@ -312,19 +315,22 @@ export default {
           this.$store.dispatch('user/loginByPhone', this.phoneForm)
             .then((roles) => {
               // console.log('roles', roles)
-              if (roles === 'administrator') {
-                this.loginMode = 4
-                Message({
-                  message: '您正在以管理员身份登陆，请进行人脸核验',
-                  type: 'warning',
-                  duration: 5 * 1000
-                })
-                this.$store.dispatch('user/resetRoles')
-                this.loading = false
-              } else {
-                this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-                this.loading = false
-              }
+              // if (roles === 'administrator') {
+              //   this.loginMode = 4
+              //   Message({
+              //     message: '您正在以管理员身份登陆，请进行人脸核验',
+              //     type: 'warning',
+              //     duration: 5 * 1000
+              //   })
+              //   this.$store.dispatch('user/resetRoles')
+              //   this.loading = false
+              // } else {
+              //   this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+              //   this.loading = false
+              // }
+              this.$store.dispatch('user/resetRoles')
+              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+              this.loading = false
             })
             .catch(() => {
               this.loading = false

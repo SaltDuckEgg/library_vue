@@ -87,18 +87,20 @@ export default {
       if (query.token) {
         this.$store.dispatch('user/loginViaToken', this.token)
           .then(() => {
-            console.log(this.roles)
-            if (this.roles === 'administrator') {
-              this.$emit('reverse')
-              Message({
-                message: '您正在以管理员身份登陆，请进行人脸核验',
-                type: 'warning',
-                duration: 5 * 1000
-              })
-              this.$store.dispatch('user/resetRoles')
-            } else {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-            }
+            // console.log(this.roles)
+            // if (this.roles === 'administrator') {
+            //   this.$emit('reverse')
+            //   Message({
+            //     message: '您正在以管理员身份登陆，请进行人脸核验',
+            //     type: 'warning',
+            //     duration: 5 * 1000
+            //   })
+            //   this.$store.dispatch('user/resetRoles')
+            // } else {
+            //   this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+            // }
+            this.$store.dispatch('user/resetRoles')
+            this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
           })
           .catch(() => {
           })

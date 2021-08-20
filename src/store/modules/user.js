@@ -16,6 +16,7 @@ import js_sha256 from 'js-sha256'
 
 const state = {
   token: getToken(),
+  id: 0,
   name: '',
   sex: '',
   username: '',
@@ -29,6 +30,9 @@ const state = {
 }
 
 const mutations = {
+  SET_ID: (state, id) => {
+    state.id = id
+  },
   SET_TOKEN: (state, token) => {
     state.token = token
   },
@@ -111,7 +115,7 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
-        const { name, sex, username, phone, email, academy, class_num, avatar, roles } = response.data
+        const { id, name, sex, username, phone, email, academy, class_num, avatar, roles } = response.data
 
         if (!username) {
           reject('认证失败，请重新登录！')
@@ -124,6 +128,7 @@ const actions = {
           reject('roles不合法!')
         }
 
+        commit('SET_ID', id)
         commit('SET_NAME', name)
         commit('SET_SEX', sex)
         commit('SET_USERNAME', username)

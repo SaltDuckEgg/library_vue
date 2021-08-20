@@ -177,3 +177,24 @@ export function getTopBookWeek() {
     method: 'get'
   })
 }
+
+export function generateRecommendBooks() {
+  return request({
+    url: baseUrl + 'habitexcel/',
+    method: 'post'
+  })
+}
+
+export function getRecommendBooks(id) {
+  return request({
+    url: baseUrl + 'books_recommend/' + id,
+    method: 'get'
+  })
+}
+
+export function getQuote(id) {
+  return request({
+    url: baseUrl + 'books_recommend/' + id,
+    method: 'get'
+  })
+}

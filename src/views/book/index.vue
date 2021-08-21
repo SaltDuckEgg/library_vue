@@ -498,7 +498,7 @@ export default {
         // importance: undefined,
         title: undefined,
         type: undefined,
-        page_size: 50,
+        page_size: 20,
         page: 1,
         sort: '+id'
         // sort: '+id'

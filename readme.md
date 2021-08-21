@@ -1,1 +1,3 @@
-咸鸭蛋们的作品
+部署方法
+npm install 
+npm run dev

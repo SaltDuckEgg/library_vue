@@ -86,7 +86,7 @@ export default {
       const username = jsonObj.username
       console.log(username)
       if (username === this.$store.getters.username || this.$store.getters.roles[0] === 'administrator') {
-        const name = this.$store.getters.name
+        const name = jsonObj.name
         const inOut = jsonObj.type ? '入馆' : '出馆'
         Message({
           message: username + ' - ' + name + '已' + inOut,

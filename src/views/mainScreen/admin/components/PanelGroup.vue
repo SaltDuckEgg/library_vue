@@ -77,11 +77,11 @@ export default {
         // console.log(response)
         this.book_num = response.data.count
       })
-      fetchList().then(response => {
-        // console.log(response)
-        // this.user_num = response.data.count
-        this.user_num = 256
-      })
+      // fetchList().then(response => {
+      // console.log(response)
+      // this.user_num = response.data.count
+      this.user_num = 256
+      // })
     }
   }
 }

@@ -263,7 +263,7 @@
         :model="temp"
         label-position="left"
         label-width="80px"
-        style="width: 1000px; margin-left:80px;height:900px;"
+        style="width: 1000px; margin-left:80px;height:750px;"
       >
         <!-- size="mini" -->
 

@@ -53,7 +53,7 @@ export default {
   },
   mounted() {
     sseClient = this.$sse.create({
-      url: 'http://124.71.225.17:8000/events/'
+      url: 'http://124.71.225.17:8000/user/stream/ '
     })
     console.log('已创建')
     sseClient.on('message', this.showMessage)
@@ -64,6 +64,13 @@ export default {
       .catch((err) => {
         console.error('无法连接到后端SSE！', err)
       })
+    // if (typeof (EventSource) !== 'undefined') {
+    //   const source = new EventSource('http://124.71.225.17:8000/user/stream/ ')
+    //   console.log('connected!')
+    //   source.onmessage = function(event) {
+    //     console.log(event.data)
+    //   }
+    // }
   },
   beforeDestroy() {
     sseClient.disconnect()
@@ -73,13 +80,15 @@ export default {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
     },
     showMessage(message) {
-      const str = JSON.parse(message)
-      const jsonObj = JSON.parse(str)
-      const username = jsonObj.username
+      console.log(message)
+      // const str = JSON.parse(message)
+      // const jsonObj = JSON.parse(message)
+      const username = message.username
       if (username === this.$store.getters.username || this.$store.getters.roles === 'administrator') {
-        const inOut = jsonObj.type ? '入馆' : '出馆'
+        const name = this.$store.getters.name
+        const inOut = message.type ? '入馆' : '出馆'
         Message({
-          message: '学号为' + username + '的学生已' + inOut,
+          message: username + name + '已' + inOut,
           type: 'success',
           duration: 5 * 1000
         })

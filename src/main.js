@@ -31,7 +31,7 @@ Vue.use(Element, {
 })
 Vue.use(VueSSE, {
   polyfill: true,
-  url: 'http://124.71.225.17:8000/user/stream/ '
+  url: 'http://124.71.225.17:8000/events/ '
 })
 // register global utility filters
 Object.keys(filters).forEach(key => {

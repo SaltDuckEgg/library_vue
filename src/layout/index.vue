@@ -53,7 +53,7 @@ export default {
   },
   mounted() {
     sseClient = this.$sse.create({
-      url: 'http://124.71.225.17:8000/user/stream/ '
+      url: 'http://124.71.225.17:8000/events/ '
     })
     console.log('已创建')
     sseClient.on('message', this.showMessage)
@@ -81,12 +81,13 @@ export default {
     },
     showMessage(message) {
       console.log(message)
-      // const str = JSON.parse(message)
-      // const jsonObj = JSON.parse(message)
-      const username = message.username
+      const str = JSON.parse(message)
+      const jsonObj = JSON.parse(str)
+      const username = jsonObj.username
+      console.log(username)
       if (username === this.$store.getters.username || this.$store.getters.roles === 'administrator') {
         const name = this.$store.getters.name
-        const inOut = message.type ? '入馆' : '出馆'
+        const inOut = jsonObj.type ? '入馆' : '出馆'
         Message({
           message: username + name + '已' + inOut,
           type: 'success',

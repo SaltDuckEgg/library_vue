@@ -89,7 +89,7 @@ export default {
         const name = this.$store.getters.name
         const inOut = jsonObj.type ? '入馆' : '出馆'
         Message({
-          message: username + name + '已' + inOut,
+          message: username + ' - ' + name + '已' + inOut,
           type: 'success',
           duration: 5 * 1000
         })

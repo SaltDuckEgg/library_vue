@@ -92,12 +92,12 @@ export default {
         ],
         series: [
           {
-            name: '湿度',
+            name: '温度',
             type: 'line',
             stack: '总量',
             smooth: true,
             lineStyle: {
-              width: 0
+              width: 3
             },
             showSymbol: true,
 
@@ -123,7 +123,7 @@ export default {
 
           },
           {
-            name: '温度',
+            name: '湿度',
             type: 'line',
             stack: '总量',
             smooth: true,

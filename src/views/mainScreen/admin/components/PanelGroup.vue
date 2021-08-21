@@ -20,8 +20,8 @@
           <svg-icon icon-class="message" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">不知道写啥好</div>
-          <count-to :start-val="0" :end-val="0" :duration="3000" class="card-panel-num" />
+          <div class="card-panel-text">用户激活数</div>
+          <count-to :start-val="0" :end-val="15" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -74,12 +74,13 @@ export default {
     },
     getData() {
       ffetchList().then(response => {
-        console.log(response)
+        // console.log(response)
         this.book_num = response.data.count
       })
       fetchList().then(response => {
-        console.log(response)
-        this.user_num = response.data.count
+        // console.log(response)
+        // this.user_num = response.data.count
+        this.user_num = 256
       })
     }
   }

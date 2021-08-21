@@ -44,7 +44,7 @@ export default {
         humi: [40, 50, 40, 50, 40, 50, 40, 40, 50, 40]
       },
       option: {
-        color: ['#00DDFF', '#FFBF00'],
+        color: ['#FFBF00', '#00DDFF'],
         title: {
           // text: '渐变堆叠面积图'
         },
@@ -100,16 +100,18 @@ export default {
               width: 0
             },
             showSymbol: true,
+
             areaStyle: {
-              opacity: 0.5,
+              opacity: 0.3,
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
                 offset: 0,
-                color: 'rgba(128, 0, 165)'
+                color: 'rgba(255, 191, 0)'
               }, {
                 offset: 1,
-                color: 'rgba(1, 191, 236)'
+                color: 'rgba(224, 62, 76)'
               }])
             },
+
             emphasis: {
               focus: 'series'
             },
@@ -134,13 +136,13 @@ export default {
               position: 'top'
             },
             areaStyle: {
-              opacity: 0.3,
+              opacity: 0.5,
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
                 offset: 0,
-                color: 'rgba(255, 191, 0)'
+                color: 'rgba(128, 0, 165)'
               }, {
                 offset: 1,
-                color: 'rgba(224, 62, 76)'
+                color: 'rgba(1, 191, 236)'
               }])
             },
             emphasis: {

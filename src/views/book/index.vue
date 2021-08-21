@@ -406,7 +406,7 @@
             :lg="{span: 6}"
             :xl="{span: 6}"
           >
-            <el-form-item label="总数" prop="title">
+            <el-form-item label="库存" prop="title">
               <el-input v-model="temp.pageviews" :disabled="!isActive" />
             </el-form-item>
           </el-col>
@@ -417,7 +417,7 @@
             :lg="{span: 6}"
             :xl="{span: 6}"
           >
-            <el-form-item label="库存" prop="title">
+            <el-form-item label="总数" prop="title">
               <el-input v-model="temp.total_pageviews" :disabled="!isActive" />
             </el-form-item>
           </el-col>

@@ -254,7 +254,7 @@ export default {
       }
     }
     const validateRepeatPassword = (rule, value, callback) => {
-      let currentForm = this.passwordFormVisible
+      let currentForm = this.passwordForm
       if (this.activationFormVisible) {
         currentForm = this.activationForm
       }
